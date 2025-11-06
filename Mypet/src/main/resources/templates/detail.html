@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="https://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyPet</title>
+    <link rel="stylesheet" href="/detail.css">
+</head>
+<body>
+<div class="header">
+    <div class="header-top">
+        <div class="logo" onclick="goBack()">MyPet</div>
+        <div class="header-nav">
+            <span class="header-nav-item">홈</span>
+            <span class="header-nav-item">콘텐츠</span>
+            <span class="header-nav-item">쇼핑</span>
+            <span class="header-nav-item active">커뮤니티</span>
+            <span class="header-nav-item">서비스</span>
+            <span class="header-nav-item">크리에이터</span>
+        </div>
+        <div class="header-actions">
+            <button class="login-btn">로그인</button>
+            <span class="menu-icon">☰</span>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <button class="back-btn" onclick="goBack()">
+        ← 목록으로
+    </button>
+
+    <div class="post-detail-card">
+        <!-- 작성자 정보 -->
+        <div class="post-author">
+            <div class="post-author-avatar">
+                <img src="https://ssoads.co.kr/common/img/default_profile.png" alt="프로필">
+            </div>
+            <div class="post-author-info">
+                <div class="post-author-name" th:text = "${detail.nickname}"></div>
+                <div class="post-author-location">서울 마포구</div>
+            </div>
+            <div class="post-author-time">2시간 전</div>
+        </div>
+
+        <!-- 게시글 이미지 -->
+        <img th:src="@{|/upload/${detail.storedFileName}|}" class="post-image" alt="게시글 이미지">
+
+        <!-- 게시글 내용 -->
+        <div class="post-content">
+            <h1 class="post-title" th:text = "${detail.title}"></h1>
+            <div class="post-description" th:text = "${detail.content}"></div>
+        </div>
+
+        <!-- 액션 버튼 -->
+        <div class="post-actions">
+            <button class="action-btn like-btn" onclick="toggleLike(this)">
+                🤍 <span id="like-count">123</span>
+            </button>
+            <button class="action-btn">💬 <span>8</span></button>
+            <button class="action-btn bookmark">🔖</button>
+        </div>
+
+        <!-- 댓글 -->
+        <div class="comments-section">
+            <div class="comments-title">댓글 8개</div>
+
+            <div class="comment-input-wrapper">
+                <input type="text" class="comment-input" placeholder="댓글을 입력하세요..." id="comment-input">
+                <button class="comment-submit-btn" onclick="addComment()">작성</button>
+            </div>
+
+            <div class="comment-list" id="comment-list">
+                <div class="comment-item">
+                    <div class="comment-avatar">🐕</div>
+                    <div class="comment-content">
+                        <div class="comment-author">피자매니아</div>
+                        <div class="comment-text">저도 가고 싶어요! 주말에 시간 괜찮을 것 같아요~</div>
+                        <div class="comment-time">1시간 전</div>
+                    </div>
+                </div>
+
+                <div class="comment-item">
+                    <div class="comment-avatar">⏰</div>
+                    <div class="comment-content">
+                        <div class="comment-author">조깅하시다</div>
+                        <div class="comment-text">카페 위치 어디인가요?</div>
+                        <div class="comment-time">50분 전</div>
+                    </div>
+                </div>
+
+                <div class="comment-item">
+                    <div class="comment-avatar">🐱</div>
+                    <div class="comment-content">
+                        <div class="comment-author">고양이집사</div>
+                        <div class="comment-text">사진만 봐도 분위기 좋네요! 저도 참여하고 싶습니다 ㅎㅎ</div>
+                        <div class="comment-time">30분 전</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleLike(btn) {
+        const countSpan = document.getElementById('like-count');
+        let count = parseInt(countSpan.textContent);
+
+        if (btn.classList.contains('liked')) {
+            btn.innerHTML = '🤍 <span id="like-count">' + (count - 1) + '</span>';
+            btn.classList.remove('liked');
+        } else {
+            btn.innerHTML = '❤️ <span id="like-count">' + (count + 1) + '</span>';
+            btn.classList.add('liked');
+        }
+    }
+
+    function addComment() {
+        const input = document.getElementById('comment-input');
+        const commentText = input.value.trim();
+
+        if (commentText === '') {
+            alert('댓글 내용을 입력해주세요!');
+            return;
+        }
+
+        const commentList = document.getElementById('comment-list');
+        const newComment = document.createElement('div');
+        newComment.className = 'comment-item';
+        newComment.innerHTML = `
+                <div class="comment-avatar">👤</div>
+                <div class="comment-content">
+                    <div class="comment-author">나</div>
+                    <div class="comment-text">${commentText}</div>
+                    <div class="comment-time">방금 전</div>
+                </div>
+            `;
+
+        commentList.insertBefore(newComment, commentList.firstChild);
+        input.value = '';
+
+        // 댓글 수 업데이트
+        const commentCount = document.querySelector('.comments-title');
+        const currentCount = parseInt(commentCount.textContent.match(/\d+/)[0]);
+        commentCount.textContent = `댓글 ${currentCount + 1}개`;
+    }
+
+    // Enter 키로 댓글 작성
+    document.getElementById('comment-input').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            addComment();
+        }
+    });
+
+    function goBack() {
+        window.history.back();
+    }
+
+    // 네비게이션 탭 전환
+    document.querySelectorAll('.header-nav-item').forEach(item => {
+        item.addEventListener('click', function() {
+            document.querySelectorAll('.header-nav-item').forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+</script>
+</body>
+</html>

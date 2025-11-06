@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="https://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyPet</title>
+    <link rel="stylesheet" href="/index.css">
+</head>
+<body>
+<div class="header">
+    <div class="header-top">
+        <div class="logo">MyPet</div>
+        <div class="header-nav">
+            <span class="header-nav-item">홈</span>
+            <span class="header-nav-item">콘텐츠</span>
+            <span class="header-nav-item">쇼핑</span>
+            <span class="header-nav-item">커뮤니티</span>
+            <span class="header-nav-item">서비스</span>
+            <span class="header-nav-item">크리에이터</span>
+        </div>
+        <div class="header-actions">
+            <button class="login-btn">로그인</button>
+            <span class="menu-icon">☰</span>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <!-- 글쓰기 버튼 -->
+    <div class="write-button-container">
+        <a href="/addpost" style="text-decoration-line: none"><button class="write-btn">글쓰기</button></a>
+    </div>
+
+    <div class="masonry-grid">
+
+        <!-- 포스트 카드 -->
+        <div class="post-card" th:each="post : ${postings}" th:attr = "data-value = ${post.rid}">
+            <div class="post-card-header">
+                <div class="post-card-avatar"><img src="https://ssoads.co.kr/common/img/default_profile.png" alt=""></div>
+                <div class="post-card-username" th:text="${post.nickname}"></div>
+            </div>
+            <img th:src="@{|/upload/${post.storedFileName}|}" class="post-card-image" alt="카페 인테리어">
+            <div class="post-card-content">
+                <div class="post-card-location">서울 마포구</div>
+                <div class="post-card-title" th:text="${post.title}"></div>
+                <div class="post-card-description" th:text="${post.content}" ></div>
+            </div>
+
+            <div class="post-card-actions">
+                <button class="action-btn like-btn" onclick="toggleLike(event, this)">🤍</button>
+                <button class="action-btn">💬</button>
+                <button class="action-btn bookmark">🔖</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<button class="fab" onclick="alert('새 포스트 작성 기능 (AI 챗봇으로 활용 고민 중)')">+</button>
+
+<script>
+    function toggleLike(event, btn) {
+        event.stopPropagation();
+
+        if (btn.classList.contains('liked')) {
+            btn.textContent = '🤍';
+            btn.classList.remove('liked');
+        } else {
+            btn.textContent = '❤️';
+            btn.classList.add('liked');
+        }
+    }
+
+    // 카드 클릭 시 상세 페이지로 이동
+    document.querySelectorAll('.post-card').forEach(card => {
+        card.addEventListener('click', function (e) {
+            if (!e.target.closest('.action-btn')) {
+                const title = this.querySelector('.post-card-title').textContent;
+                const value = card.dataset.value;
+                const ridValue = parseInt(value)
+                console.log("value : " + value)
+
+                // alert(`"${title}" 포스트 상세 페이지로 이동`);
+                window.location.href = `/postings/${ridValue}`
+            }
+        });
+    });
+
+    // 네비게이션 탭 전환
+    document.querySelectorAll('.sub-nav-item').forEach(item => {
+        item.addEventListener('click', function() {
+            document.querySelectorAll('.sub-nav-item').forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+    document.querySelectorAll('.header-nav-item').forEach(item => {
+        item.addEventListener('click', function() {
+            document.querySelectorAll('.header-nav-item').forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+</script>
+</body>
+</html>

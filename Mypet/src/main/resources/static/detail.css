@@ -1,0 +1,349 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #fafafa;
+    padding-top: 80px;
+}
+
+/* 헤더 */
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-bottom: 1px solid #e5e5e5;
+    padding: 0;
+    z-index: 100;
+}
+
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.logo {
+    font-size: 28px;
+    font-weight: bold;
+    color: #000;
+    font-family: 'Brush Script MT', cursive;
+    cursor: pointer;
+}
+
+.header-nav {
+    display: flex;
+    gap: 32px;
+    align-items: center;
+}
+
+.header-nav-item {
+    font-size: 15px;
+    font-weight: 500;
+    margin: 0 20px;
+    padding: 8px 8px;
+    color: #333;
+    text-decoration: none;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.header-nav-item:hover {
+    color: #000;
+}
+
+.header-actions {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.header-nav-item.active {
+    color: #000;
+    border-bottom-color: #ffd500;
+}
+
+.login-btn {
+    background: #ffd500;
+    color: #000;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.login-btn:hover {
+    background: #ffdd33;
+}
+
+.menu-icon {
+    cursor: pointer;
+    font-size: 24px;
+    color: #333;
+}
+
+/* 메인 컨테이너 */
+.container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+/* 뒤로가기 버튼 */
+.back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    margin-bottom: 20px;
+    background: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    transition: all 0.2s;
+}
+
+.back-btn:hover {
+    background: #f8f8f8;
+    border-color: #d5d5d5;
+}
+
+/* 게시글 카드 */
+.post-detail-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+/* 작성자 정보 */
+.post-author {
+    display: flex;
+    align-items: center;
+    padding: 20px 24px;
+    gap: 12px;
+    border-bottom: 1px solid #efefef;
+}
+
+.post-author-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f3f3f3;
+}
+
+.post-author-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.post-author-info {
+    flex-grow: 1;
+}
+
+.post-author-name {
+    font-weight: 600;
+    font-size: 16px;
+    color: #262626;
+    margin-bottom: 4px;
+}
+
+.post-author-location {
+    font-size: 13px;
+    color: #8e8e8e;
+}
+
+.post-author-time {
+    font-size: 13px;
+    color: #8e8e8e;
+}
+
+/* 게시글 이미지 */
+.post-image {
+    width: 100%;
+    max-height: 600px;
+    object-fit: cover;
+}
+
+/* 게시글 내용 */
+.post-content {
+    padding: 24px;
+}
+
+.post-title {
+    font-size: 26px;
+    font-weight: bold;
+    color: #262626;
+    margin-bottom: 16px;
+    line-height: 1.4;
+}
+
+.post-description {
+    font-size: 16px;
+    color: #262626;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+
+/* 액션 버튼 */
+.post-actions {
+    display: flex;
+    padding: 16px 24px;
+    gap: 16px;
+    align-items: center;
+    border-top: 1px solid #efefef;
+    border-bottom: 1px solid #efefef;
+}
+
+.action-btn {
+    cursor: pointer;
+    font-size: 20px;
+    background: none;
+    border: none;
+    transition: transform 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.action-btn:hover {
+    transform: scale(1.1);
+}
+
+.action-btn.liked {
+    color: #ed4956;
+}
+
+.bookmark {
+    margin-left: auto;
+}
+
+/* 댓글 섹션 */
+.comments-section {
+    padding: 24px;
+}
+
+.comments-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #262626;
+    margin-bottom: 20px;
+}
+
+.comment-input-wrapper {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.comment-input {
+    flex-grow: 1;
+    padding: 12px 16px;
+    border: 1px solid #e5e5e5;
+    border-radius: 20px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.comment-input:focus {
+    border-color: #ffd500;
+}
+
+.comment-submit-btn {
+    padding: 10px 24px;
+    background: #ffd500;
+    color: #000;
+    border: none;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.comment-submit-btn:hover {
+    background: #ffdd33;
+}
+
+.comment-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.comment-item {
+    display: flex;
+    gap: 12px;
+}
+
+.comment-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #ffd500 0%, #ffdd33 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.comment-content {
+    flex-grow: 1;
+}
+
+.comment-author {
+    font-weight: 600;
+    font-size: 14px;
+    color: #262626;
+    margin-bottom: 4px;
+}
+
+.comment-text {
+    font-size: 14px;
+    color: #262626;
+    line-height: 1.5;
+}
+
+.comment-time {
+    font-size: 12px;
+    color: #8e8e8e;
+    margin-top: 4px;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 0 12px;
+        margin: 20px auto;
+    }
+
+    .post-title {
+        font-size: 22px;
+    }
+
+    .post-description {
+        font-size: 15px;
+    }
+}

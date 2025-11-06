@@ -1,0 +1,336 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #fafafa;
+    padding-top: 75px;
+}
+
+/* 헤더 */
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-bottom: 1px solid #e5e5e5;
+    padding: 0;
+    z-index: 100;
+}
+
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.logo {
+    font-size: 28px;
+    font-weight: bold;
+    color: #000;
+    font-family: 'Brush Script MT', cursive;
+}
+
+.header-nav {
+    display: flex;
+    gap: 32px;
+    align-items: center;
+}
+
+.header-nav-item {
+    font-size: 15px;
+    font-weight: 500;
+    margin: 0 20px;
+    padding: 8px 8px;
+    color: #333;
+    text-decoration: none;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.header-nav-item:hover {
+    color: #000;
+}
+
+.header-actions {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.header-nav-item.active {
+    color: #000;
+    border-bottom-color: #ffd500;
+}
+
+.login-btn {
+    background: #ffd500;
+    color: #000;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.login-btn:hover {
+    background: #ffdd33;
+}
+
+.menu-icon {
+    cursor: pointer;
+    font-size: 24px;
+    color: #333;
+}
+
+/* 서브 네비게이션 */
+.sub-nav {
+    display: flex;
+    justify-content: center;
+    gap: 48px;
+    padding: 12px 0;
+    background: white;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.sub-nav-item {
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
+    color: #666;
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.sub-nav-item:hover {
+    color: #000;
+}
+
+.sub-nav-item.active {
+    color: #000;
+    border-bottom-color: #ffd500;
+}
+
+/* 메인 컨테이너 */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* 글쓰기 버튼 영역 */
+.write-button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+    padding: 0 10px;
+}
+
+.write-btn {
+    background: #ffd500;
+    color: #000;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(255, 213, 0, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.write-btn:hover {
+    background: #ffdd33;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 213, 0, 0.4);
+}
+
+.write-btn::before {
+    content: '✏️';
+    font-size: 18px;
+}
+
+/* 메이슨리 그리드 레이아웃 */
+.masonry-grid {
+    column-count: 4;
+    column-gap: 20px;
+}
+
+@media (max-width: 1200px) {
+    .masonry-grid {
+        column-count: 3;
+    }
+}
+
+@media (max-width: 900px) {
+    .masonry-grid {
+        column-count: 2;
+    }
+}
+
+@media (max-width: 600px) {
+    .masonry-grid {
+        column-count: 1;
+    }
+}
+
+/* 포스트 카드 */
+.post-card {
+    background: white;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    break-inside: avoid;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+}
+
+.post-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+
+.post-card-image {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.post-card-content {
+    padding: 16px;
+}
+
+.post-card-location {
+    color: #8e8e8e;
+    font-size: 12px;
+    margin-bottom: 8px;
+}
+
+.post-card-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #262626;
+    margin-bottom: 8px;
+}
+
+.post-card-description {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-height: 1.5em;
+    font-size: 14px;
+    color: #8e8e8e;
+    line-height: 1.5;
+}
+
+.post-card-header {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    gap: 10px;
+    border-bottom: 1px solid #efefef;
+}
+/*기존 이모지 표현*/
+.post-card-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #ffd500 0%, #ffdd33 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000;
+    font-size: 14px;
+}
+/*이미지로 변환*/
+.post-card-avatar{
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    overflow: hidden; /* 이미지를 둥글게 자름 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f3f3f3;
+}
+.post-card-avatar img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.post-card-username {
+    font-weight: 600;
+    font-size: 14px;
+    flex-grow: 1;
+}
+
+.post-card-actions {
+    display: flex;
+    padding: 12px 16px;
+    gap: 16px;
+    align-items: center;
+    border-top: 1px solid #efefef;
+}
+
+.action-btn {
+    cursor: pointer;
+    font-size: 20px;
+    background: none;
+    border: none;
+    transition: transform 0.2s;
+}
+
+.action-btn:hover {
+    transform: scale(1.15);
+}
+
+.action-btn.liked {
+    color: #ed4956;
+}
+
+.bookmark {
+    margin-left: auto;
+}
+
+/* 새 포스트 버튼 */
+.fab {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #ffd500;
+    color: #000;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    transition: transform 0.2s;
+    z-index: 50;
+}
+
+.fab:hover {
+    transform: scale(1.1);
+    background: #ffdd33;
+}
