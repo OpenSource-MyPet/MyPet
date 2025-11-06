@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <title>MyPet Map</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    html, body { height:100%; margin:0; }
+    #map { width:100%; height:100vh; }
+    .overlay-card{width:240px;background:#fff;border:1px solid #e5e7eb;border-radius:10px;box-shadow:0 10px 24px rgba(0,0,0,.15);overflow:hidden}
+    .overlay-header{position:relative}
+    .overlay-thumb{width:100%;height:130px;object-fit:cover;display:block}
+    .overlay-close{position:absolute;top:6px;right:6px;width:26px;height:26px;border-radius:50%;border:1px solid #e5e7eb;background:#fff;cursor:pointer}
+    .overlay-body{padding:10px 12px}
+    .name{font-weight:700}
+    .badge{display:inline-block;margin-left:6px;padding:1px 6px;border:1px solid #e5e7eb;border-radius:999px;font-size:11px;background:#f8fafc}
+    .addr{font-size:12px;color:#6b7280;margin-top:4px}
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+
+  <!-- Kakao Maps SDK: JS 키만 교체 -->
+  <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=f9dabfab3e52a805008e3beea7d3a98b&autoload=false"></script>
+  <script>
+    // 샘플 데이터 3개 (충북대 일대) — image는 비워두고 종/ID로 사진 자동 생성
+    const PETS = [
+      { id:1, name:"Mango", species:"Dog",
+        lat:36.632473, lng:127.453143, address:"충북대 중앙",
+        desc:"캠퍼스 산책 좋아하는 2살 말티즈", image:"" },
+      { id:2, name:"Nabi",  species:"Cat",
+        lat:36.6239, lng:127.4614, address:"충북대학교병원",
+        desc:"겁 많지만 호기심 많은 코숏", image:"" },
+      { id:3, name:"Berry", species:"Dog",
+        lat:36.635, lng:127.447, address:"청주시 서원구 일대",
+        desc:"장난꾸러기 리트리버", image:"" }
+    ];
+
+    // ✅ 종/ID마다 다른 사진을 주는 헬퍼
+    function photoUrl(pet, w, h) {
+      // 강아지: placedog.net은 ?id= 값으로 이미지가 달라짐(안정적)
+      if (pet.species === "Dog") return `https://placedog.net/${w}/${h}?id=${pet.id}`;
+      // 고양이: cataas는 unique 파라미터로 각기 다른 이미지
+      return `https://cataas.com/cat?width=${w}&height=${h}&unique=${pet.id}`;
+    }
+    // 실패 시 대체(종별 기본)
+    function fallbackUrl(pet, w, h) {
+      return (pet.species === "Dog")
+        ? `https://place.dog/${w}/${h}`
+        : `https://placekitten.com/${w}/${h}`;
+    }
+
+    let map, openOverlay = null;
+
+    kakao.maps.load(function () {
+      const center = new kakao.maps.LatLng(36.632473, 127.453143);
+      map = new kakao.maps.Map(document.getElementById('map'), { center, level: 6 });
+
+      // 지도 빈 곳 클릭하면 열린 오버레이 닫기
+      kakao.maps.event.addListener(map, 'click', function(){
+        if (openOverlay) { openOverlay.setMap(null); openOverlay = null; }
+      });
+
+      // 각 펫에 대해 마커 + 오버레이 생성
+      PETS.forEach(pet => {
+        const pos = new kakao.maps.LatLng(pet.lat, pet.lng);
+        const marker = new kakao.maps.Marker({ position: pos });
+        marker.setMap(map);
+
+        const content = document.createElement('div');
+        content.className = 'overlay-card';
+
+        // 여기서 종/ID별로 서로 다른 이미지 부여
+        const imgSrc = pet.image && pet.image.trim().length > 0
+          ? pet.image
+          : photoUrl(pet, 400, 280);
+
+        content.innerHTML = `
+          <div class="overlay-header">
+            <img class="overlay-thumb"
+                 src="${imgSrc}"
+                 alt="${pet.name}"
+                 referrerpolicy="no-referrer">
+            <button class="overlay-close" aria-label="close">×</button>
+          </div>
+          <div class="overlay-body">
+            <div class="name">${pet.name}<span class="badge">${pet.species}</span></div>
+            <div class="addr">📍 ${pet.address}</div>
+            <div style="font-size:13px;margin-top:4px;color:#374151">${pet.desc}</div>
+          </div>
+        `;
+
+        // onerror로 종별 기본 이미지로 안전하게 복구
+        const imgEl = content.querySelector('.overlay-thumb');
+        imgEl.onerror = () => { imgEl.src = fallbackUrl(pet, 400, 280); };
+
+        const overlay = new kakao.maps.CustomOverlay({
+          content, position: pos, yAnchor: 1.12, xAnchor: 0.5, clickable: true
+        });
+
+        // 닫기 버튼
+        content.querySelector('.overlay-close').addEventListener('click', (e) => {
+          e.stopPropagation();
+          overlay.setMap(null);
+          if (openOverlay === overlay) openOverlay = null;
+        });
+
+        // 마커 클릭 시: 기존 오버레이 닫고 이 오버레이 열기
+        kakao.maps.event.addListener(marker, 'click', function(){
+          if (openOverlay) openOverlay.setMap(null);
+          overlay.setMap(map);
+          openOverlay = overlay;
+          map.panTo(pos);
+        });
+      });
+    });
+  </script>
+</body>
+</html>
