@@ -21,10 +21,21 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'  // WebClient용
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
+// ✅ 컴파일러 플래그는 전역에 정의
+compileJava {
+    options.compilerArgs += ['-parameters']
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << '-parameters'
+}
+
+// ✅ test 태스크는 별도로
 tasks.named('test') {
 	useJUnitPlatform()
 }
