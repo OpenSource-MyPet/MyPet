@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyPet</title>
+    <link rel="stylesheet" href="/writePost.css">
+</head>
+<body>
+<div class="header">
+    <div class="header-top">
+        <div class="logo">MyPet</div>
+        <div class="header-nav">
+            <span class="header-nav-item">홈</span>
+            <span class="header-nav-item">콘텐츠</span>
+            <span class="header-nav-item">쇼핑</span>
+            <span class="header-nav-item active">커뮤니티</span>
+            <span class="header-nav-item">서비스</span>
+            <span class="header-nav-item">크리에이터</span>
+        </div>
+        <div class="header-actions">
+            <button class="login-btn">로그인</button>
+            <span class="menu-icon">☰</span>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <form action="/addpost" method="POST" class="write-form" id="postForm" enctype="multipart/form-data">
+        <div class="form-header">
+            <h1>📄 포스트 작성하기</h1>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="title">제목</label>
+            <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    class="form-input"
+                    placeholder="제목을 입력하세요"
+                    required
+            >
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="content">본문</label>
+            <textarea
+                    id="content"
+                    class="form-textarea"
+                    name="content"
+                    placeholder="여러분의 이야기를 자유롭게 공유해주세요!"
+                    required
+            ></textarea>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">사진 첨부</label>
+            <div class="image-upload-area" id="uploadArea">
+                <div class="upload-icon">📷</div>
+                <div class="upload-text">클릭하거나 드래그하여 이미지 업로드</div>
+                <div class="upload-subtext">JPG, PNG 형식 지원 (최대 10MB)</div>
+            </div>
+            <input
+                    type="file"
+                    id="imageInput"
+                    accept="image/*"
+                    name="file"
+            >
+            <div class="image-preview-container" id="previewContainer"></div>
+        </div>
+
+        <div class="form-actions">
+            <button type="button" class="btn btn-cancel" onclick="history.back()">취소</button>
+            <button type="submit" class="btn btn-submit">게시하기</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    const uploadArea = document.getElementById('uploadArea');
+    const imageInput = document.getElementById('imageInput');
+    const previewContainer = document.getElementById('previewContainer');
+    const postForm = document.getElementById('postForm');
+    let selectedFiles = [];
+
+    // 업로드 영역 클릭 이벤트
+    uploadArea.addEventListener('click', () => {
+        imageInput.click();
+    });
+
+    // 파일 선택 이벤트
+    imageInput.addEventListener('change', (e) => {
+        handleFiles(e.target.files);
+    });
+
+    // 드래그 앤 드롭 이벤트
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.classList.add('dragover');
+    });
+
+    uploadArea.addEventListener('dragleave', () => {
+        uploadArea.classList.remove('dragover');
+    });
+
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+        handleFiles(e.dataTransfer.files);
+    });
+
+    // 파일 처리 함수
+    function handleFiles(files) {
+        const newFiles = Array.from(files).filter(file => {
+            // 이미지 파일만 허용
+            if (!file.type.startsWith('image/')) {
+                alert('이미지 파일만 업로드 가능합니다.');
+                return false;
+            }
+            // 10MB 제한
+            if (file.size > 10 * 1024 * 1024) {
+                alert('파일 크기는 10MB를 초과할 수 없습니다.');
+                return false;
+            }
+            return true;
+        });
+
+        selectedFiles = [...selectedFiles, ...newFiles];
+        displayPreviews();
+    }
+
+    // 미리보기 표시 함수
+    function displayPreviews() {
+        previewContainer.innerHTML = '';
+
+        selectedFiles.forEach((file, index) => {
+            const reader = new FileReader();
+
+            reader.onload = (e) => {
+                const preview = document.createElement('div');
+                preview.className = 'image-preview';
+                preview.innerHTML = `
+                        <img src="${e.target.result}" alt="Preview ${index + 1}">
+                        <button type="button" class="remove-image" onclick="removeImage(${index})">×</button>
+                    `;
+                previewContainer.appendChild(preview);
+            };
+
+            reader.readAsDataURL(file);
+        });
+    }
+
+    // 이미지 제거 함수
+    function removeImage(index) {
+        selectedFiles.splice(index, 1);
+        displayPreviews();
+    }
+
+    // 폼 제출 이벤트
+    postForm.addEventListener('submit', (e) => {
+
+
+        const title = document.getElementById('title').value.trim();
+        const content = document.getElementById('content').value.trim();
+
+        if (!title || !content) {
+            alert('제목과 내용을 모두 입력해주세요.');
+            e.preventDefault();
+        }
+
+        // 실제로는 서버로 데이터 전송
+        console.log({
+            title: title,
+            content: content,
+            images: selectedFiles
+        });
+
+        alert('게시글이 작성되었습니다!');
+        // history.back(); // 이전 페이지로 이동
+    });
+
+    // 네비게이션 항목 클릭 이벤트
+    document.querySelectorAll('.header-nav-item').forEach(item => {
+        item.addEventListener('click', function() {
+            document.querySelectorAll('.header-nav-item').forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+</script>
+</body>
+</html>

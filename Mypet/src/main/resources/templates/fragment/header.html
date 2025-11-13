@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+
+</head>
+<body>
+<th:block th:fragment="headerStyle">
+    <style>
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-bottom: 1px solid #e5e5e5;
+            padding: 0;
+            z-index: 100;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #000;
+            font-family: 'Brush Script MT', cursive;
+            cursor: pointer;
+        }
+
+        .header-nav {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .header-nav-item {
+            font-size: 15px;
+            font-weight: 500;
+            margin: 0 20px;
+            padding: 8px 8px;
+            color: #333;
+            text-decoration: none;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .header-nav-item:hover {
+            color: #000;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .header-nav-item.active {
+            color: #000;
+            border-bottom-color: #ffd500;
+        }
+
+        .login-btn {
+            background: #ffd500;
+            color: #000;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        /*---------------------------------add this for user-----------------------------------------*/
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 6px 16px 6px 6px;
+            background: #fff;
+
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .user-profile:hover {
+            background: #fffef0;
+            border-color: #ffdd33;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #ffd500 0%, #ffdd33 100%);
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #000;
+        }
+        /*-----------------------add the user--------------------------*/
+
+
+
+        .login-btn:hover {
+            background: #ffdd33;
+        }
+        .logout-btn {
+            background: #ffd500;
+            color: #000;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .logout-btn:hover {
+            background: #ffdd33;
+        }
+
+        .menu-icon {
+            cursor: pointer;
+            font-size: 24px;
+            color: #333;
+        }
+
+        /* 서브 네비게이션 */
+        .sub-nav {
+            display: flex;
+            justify-content: center;
+            gap: 48px;
+            padding: 12px 0;
+            background: white;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .sub-nav-item {
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .sub-nav-item:hover {
+            color: #000;
+        }
+
+        .sub-nav-item.active {
+            color: #000;
+            border-bottom-color: #ffd500;
+        }
+    </style>
+</th:block>
+
+<!-- 헤더 프래그먼트 -->
+<div th:fragment="header" class="header">
+    <div class="header-top">
+        <div class="logo" onclick="location.href ='/' ">MyPet</div>
+        <div class="header-nav">
+            <span class="header-nav-item">홈</span>
+            <span class="header-nav-item">콘텐츠</span>
+            <span class="header-nav-item">Feature A</span>
+            <span class="header-nav-item">Feature B</span>
+            <span class="header-nav-item">Feature C</span>
+            <span class="header-nav-item">Feature D</span>
+        </div>
+        <div class="header-actions">
+            <button th:if="${session.id == null}" class="login-btn" onclick="location.href = '/login'">로그인</button>
+            <div th:unless="${session.id == null}" style="display: flex; align-items: center; gap: 5px;">
+                <div  class="user-profile" id="userProfile">
+                    <div class="user-avatar" >
+                        <img src="https://ssoads.co.kr/common/img/default_profile.png" alt="프로필" id="userAvatar">
+                    </div>
+                    <span class="user-name" id="userName"><span th:text="${session.nickname}"></span> 님</span>
+                </div>
+                <button class="logout-btn" onclick="location.href = '/logout'">로그아웃</button>
+            </div>
+
+            <span class="menu-icon">☰</span>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
