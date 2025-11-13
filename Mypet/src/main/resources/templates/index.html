@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="https://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyPet</title>
+    <link rel="stylesheet" href="/index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <th:block th:replace = "fragment/header :: headerStyle"></th:block>
+</head>
+<body>
+
+<th:block th:replace = "fragment/header :: header"></th:block>
+
+<div class="container">
+
+    <div class="search-container">
+        <div class="search-wrapper">
+            <input type="text" class="search-box" id="searchInput" placeholder="게시물, 장소, 사용자 검색...">
+            <i class="fas fa-search search-icon"></i>
+            <button class="clear-btn" id="clearBtn"><i class="fas fa-times-circle"></i></button>
+        </div>
+    </div>
+
+    <!-- 글쓰기 버튼 -->
+    <div class="write-button-container">
+        <div class="category-filter">
+            <button class="category-btn active" data-category="all">전체</button>
+            <button class="category-btn" data-category="강아지">강아지</button>
+            <button class="category-btn" data-category="고양이">고양이</button>
+            <button class="category-btn" data-category="공원">공원</button>
+            <button class="category-btn" data-category="카페">카페</button>
+            <button class="category-btn" data-category="팁">팁</button>
+<!--            <button class="category-btn" data-category="etc">기타</button>-->
+        </div>
+        <a href="/addpost" style="text-decoration-line: none"><button class="write-btn">글쓰기</button></a>
+    </div>
+
+    <div class="masonry-grid">
+
+        <!-- 포스트 카드 -->
+        <div class="post-card" th:each="post : ${postings}" th:attr = "data-value = ${post.rid}, data-title = ${post.title}" >
+            <div class="post-card-header">
+                <div class="post-card-avatar"><img src="https://ssoads.co.kr/common/img/default_profile.png" alt=""></div>
+                <div class="post-card-username" th:text="${post.nickname}"></div>
+            </div>
+            <img th:src="@{|/upload/${post.storedFileName}|}" class="post-card-image" alt="카페 인테리어">
+            <div class="post-card-content">
+                <div class="post-card-location">서울 마포구</div>
+                <div class="post-card-title" th:text="${post.title}"></div>
+                <div class="post-card-description" th:text="${post.content}" ></div>
+            </div>
+
+            <div class="post-card-actions">
+                <button class="action-btn like-btn" onclick="toggleLikes(event, this)">
+                    <i class="far fa-heart"></i> <span class="like-count" th:text="${post.likes}">0</span>
+                </button>
+                <button class="action-btn"><i class="far fa-comment"></i></button>
+                <button class="action-btn bookmark" id="bookmark-btn" onclick="toggleBooks(event, this)"><i class="far fa-bookmark"></i></button>
+            </div>
+        </div>
+    </div>
+    <div class="no-results" id="noResults">
+        <i class="fas fa-search"></i>
+        <p>검색 결과가 없습니다.</p>
+    </div>
+</div>
+
+<button class="fab" onclick="toggleChat()"><i class="fas fa-comment"></i></button>
+<div class="chat-popup" id="chatPopup">
+    <div class="chat-header">
+        <div class="chat-header-left">
+            <button class="chat-back-btn" onclick="toggleChat()">←</button>
+            <div class="chat-avatar"><i class="fas fa-paw"></i></div>
+            <div class="chat-info">
+                <h3>에브리애니멀</h3>
+                <p>MyPet만의 맞춤형 AI 비서</p>
+            </div>
+        </div>
+        <button class="chat-menu-btn">⋮</button>
+    </div>
+
+    <div class="chat-body" id="chatBody">
+        <div class="message-info">특별한 반려동물 라이프의 시작을 위한 에브리애니멀</div>
+
+        <div class="chat-message received">
+            <div class="message-bubble">안녕하세요,<br>에브리애니멀 AI 비서입니다.<br>무엇을 도와드릴까요?</div>
+             <div class="message-time">방금 전</div>
+        </div>
+
+
+<!--        <div class="chat-message received">-->
+<!--            <div class="typing-indicator">-->
+<!--                 <div class="message-bubble">Ai 입력 중</div>-->
+<!--                <div class="typing-dot"></div>-->
+<!--                <div class="typing-dot"></div>-->
+<!--                <div class="typing-dot"></div>-->
+<!--            </div>-->
+<!--        </div>-->
+
+    </div>
+
+    <div class="chat-footer">
+        <!-- <button class="attach-btn">📎</button> -->
+        <div class="chat-input-wrapper">
+            <input type="text" class="chat-input" placeholder="메시지를 입력해주세요." id="chatInput">
+        </div>
+        <button class="send-btn" id="sendBtn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    const searchInput = document.getElementById('searchInput');
+    const clearBtn = document.getElementById('clearBtn');
+    const postGrid = document.getElementById('postGrid');
+    const noResults = document.getElementById('noResults');
+
+    function toggleChat() {
+        const chatPopup = document.getElementById('chatPopup');
+        chatPopup.classList.toggle('active');
+    }
+
+    async function sendMessage() {
+        const input = document.getElementById('chatInput');
+        const message = input.value.trim();
+
+        if (message) {
+            const chatBody = document.getElementById('chatBody');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'chat-message sent';
+
+            const now = new Date();
+            const timeStr = `오후 ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+            messageDiv.innerHTML = `
+                    <div class="message-bubble">${message}</div>
+                    <div class="message-time">${timeStr}</div>
+                `;
+
+            chatBody.appendChild(messageDiv);
+            chatBody.scrollTop = chatBody.scrollHeight;
+
+            input.value = '';
+            showTypingIndicator();
+            const response = await fetch("/gpt", {
+                method : "POST",
+                headers : {
+                    "Content-Type" : "application/json"
+                },
+                body: JSON.stringify({"prompt" : message})
+            })
+
+            if(response.ok){
+                const res = await response.json()
+                hideTypingIndicator();
+                if(res['status'] == "ok"){
+                    const prompt = res['prompt']
+                    addAIResponse(prompt)
+                }
+            }
+            else{
+                console.log("Failed to connecting to server")
+                hideTypingIndicator();
+            }
+
+            // AI 응답 시뮬레이션
+            // setTimeout(() => {
+            //     showTypingIndicator();
+            //     setTimeout(() => {
+            //         hideTypingIndicator();
+            //         addAIResponse('네, 도와드리겠습니다! 어떤 내용이 궁금하신가요?');
+            //     }, 2000);
+            // }, 500);
+        }
+    }
+
+    function showTypingIndicator() {
+        const chatBody = document.getElementById('chatBody');
+        const typingDiv = document.createElement('div');
+        typingDiv.className = 'chat-message received';
+        typingDiv.id = 'typingIndicator';
+        typingDiv.innerHTML = `
+                <div class="typing-indicator">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            `;
+        chatBody.appendChild(typingDiv);
+        chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    function hideTypingIndicator() {
+        const typingIndicator = document.getElementById('typingIndicator');
+        if (typingIndicator) {
+            typingIndicator.remove();
+        }
+    }
+
+    function addAIResponse(text) {
+        const chatBody = document.getElementById('chatBody');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'chat-message received';
+
+        const now = new Date();
+        const timeStr = `오후 ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+        messageDiv.innerHTML = `
+                <div class="message-bubble">${text}</div>
+                <div class="message-time">${timeStr}</div>
+            `;
+
+        chatBody.appendChild(messageDiv);
+        chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    document.getElementById('chatInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
+    });
+
+
+    const toggleBooks = async(event, btn) => {
+        const postcard = btn.closest('.post-card')
+        const post_id = postcard.getAttribute('data-value')
+        // console.log(post_id)
+        event.stopPropagation();
+        let isMarked = 1;
+        const icon = btn.querySelector('i');
+        if(icon.classList.contains('far')){
+            icon.classList.remove('far')
+            icon.classList.add('fas') // 북마크 추가
+        }
+        else{
+            icon.classList.remove('fas')
+            icon.classList.add('far')
+            isMarked = 0
+        }
+        const response = await fetch("/bookmark", {
+            method : "POST",
+            headers : {
+                'Content-Type' : 'application/json'
+            },
+            body : JSON.stringify({"status" : isMarked, "post_id" : post_id})
+        })
+        if(response.ok){
+            const res = await response.json()
+            console.log(res);
+            if(res['status'] == "no"){
+                alert("로그인이 필요한 서비스입니다!")
+                location.href = "/login"
+            }
+        }
+        else{
+            console.log("failed to connecting server")
+        }
+
+    }
+
+    async function toggleLikes (event, btn) {
+        const postcard = btn.closest('.post-card')
+        const post_id = postcard.getAttribute('data-value')
+        console.log(post_id)
+        event.stopPropagation();
+        let isLiked = 1 ;
+
+        const icon = btn.querySelector('i');
+        const countSpan = btn.querySelector('.like-count');
+        let count = parseInt(countSpan.textContent);
+
+        if (btn.classList.contains('liked')) {
+            icon.classList.remove('fas');
+            icon.classList.add('far');
+            btn.classList.remove('liked');
+            isLiked = 0
+            if(count > 0) count--;
+        } else {
+            icon.classList.remove('far');
+            icon.classList.add('fas');
+            btn.classList.add('liked');
+            isLiked = 1
+            count++;
+        }
+        countSpan.textContent = count;
+
+        const response = await fetch("/like", {
+            method : "POST",
+            headers : {
+                'Content-Type' : 'application/json'
+            },
+            body : JSON.stringify({"status" : isLiked, "post_id" : post_id})
+        })
+        if(response.ok){
+            const res = await response.json()
+            console.log(res);
+            if(res['status'] == "no"){
+                alert("로그인이 필요한 서비스입니다!")
+                location.href = "/login"
+            }
+        }
+        else{
+            console.log("failed to connecting server")
+        }
+    }
+    // 각 사용자마다의 이전 상호작용 여부
+    const likePostIds = [[${Likes}]]
+    const bookMarkPostIds = [[${BookMarks}]]
+    const likeset = new Set(likePostIds)
+    const bookmarkSet = new Set(bookMarkPostIds)
+    document.addEventListener('DOMContentLoaded', () => {
+        const postCards = document.querySelectorAll(".post-card")
+        console.log("the like set is " + likeset)
+
+        postCards.forEach(element => {
+            const postId = parseInt(element.dataset.value)
+            if(likeset.has(postId)){
+                const btn = element.querySelector(".action-btn")
+                const icon = btn.querySelector('i');
+                const countSpan = btn.querySelector('.like-count');
+                icon.classList.remove('far');
+                icon.classList.add('fas');
+                btn.classList.add('liked');
+            }
+            if(bookmarkSet.has(postId)){
+                const btn = element.querySelector('#bookmark-btn')
+                const icon = btn.querySelector('i')
+                icon.classList.remove('far')
+                icon.classList.add('fas') // 북마크 추가
+            }
+        })
+    })
+
+    searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase().trim();
+
+        // 클리어 버튼 표시/숨김
+        if (searchTerm) {
+            clearBtn.classList.add('active');
+        } else {
+            clearBtn.classList.remove('active');
+        }
+
+        // 검색 필터링
+        const cards = document.querySelectorAll('.post-card');
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+            const title = card.dataset.title.toLowerCase();
+
+            console.log(title)
+            if (title.includes(searchTerm) ) {
+                card.style.display = '';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        // 결과 없음 메시지
+        if (visibleCount === 0 && searchTerm) {
+            noResults.classList.add('active');
+            postGrid.style.display = 'none';
+        } else {
+            noResults.classList.remove('active');
+            postGrid.style.display = '';
+        }
+    });
+
+    clearBtn.addEventListener('click', function() {
+        searchInput.value = '';
+        clearBtn.classList.remove('active');
+
+        document.querySelectorAll('.post-card').forEach(card => {
+            card.style.display = '';
+        });
+
+        noResults.classList.remove('active');
+        postGrid.style.display = '';
+        searchInput.focus();
+    });
+
+    let currentCategory = 'all';
+    const categoryBtns = document.querySelectorAll('.category-btn');
+    categoryBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            // 모든 버튼에서 active 클래스 제거
+            categoryBtns.forEach(b => b.classList.remove('active'));
+            // 클릭된 버튼에 active 클래스 추가
+            this.classList.add('active');
+
+            currentCategory = this.dataset.category;
+            filterPosts();
+        });
+    });
+
+    // 포스트 필터링 함수
+    function filterPosts() {
+        const cards = document.querySelectorAll('.post-card');
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+            const title = card.dataset.title.toLowerCase();
+
+
+            // 카테고리 필터 체크
+            const categoryMatch = currentCategory === 'all' || title.includes(currentCategory)
+
+            if (categoryMatch) {
+                card.style.display = '';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        // 결과 없음 메시지
+        if (visibleCount === 0) {
+            noResults.classList.add('active');
+            postGrid.style.display = 'none';
+        } else {
+            noResults.classList.remove('active');
+            postGrid.style.display = '';
+        }
+    }
+
+
+
+    // 카드 클릭 시 상세 페이지로 이동
+    document.querySelectorAll('.post-card').forEach(card => {
+        card.addEventListener('click', function (e) {
+            if (!e.target.closest('.action-btn')) {
+                const title = this.querySelector('.post-card-title').textContent;
+                const value = card.dataset.value;
+                const ridValue = parseInt(value)
+                console.log("value : " + value)
+
+                // alert(`"${title}" 포스트 상세 페이지로 이동`);
+                window.location.href = `/postings/${ridValue}`
+            }
+        });
+    });
+
+
+
+    // 네비게이션 탭 전환
+    document.querySelectorAll('.sub-nav-item').forEach(item => {
+        item.addEventListener('click', function() {
+            document.querySelectorAll('.sub-nav-item').forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+    document.querySelectorAll('.header-nav-item').forEach(item => {
+        item.addEventListener('click', function() {
+            document.querySelectorAll('.header-nav-item').forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+</script>
+</body>
+</html>
