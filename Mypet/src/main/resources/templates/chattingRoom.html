@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="https://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>채팅방 - MyPet</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <th:block th:replace = "fragment/header :: headerStyle"></th:block>
+    <link rel="stylesheet" href="/chattingRoom.css">
+
+</head>
+<body>
+<th:block th:replace = "fragment/header :: header"></th:block>
+<!--<div class="header">-->
+<!--    <div class="header-top">-->
+<!--        <div class="logo">MyPet</div>-->
+<!--        <div class="header-nav">-->
+<!--            <span class="header-nav-item">홈</span>-->
+<!--            <span class="header-nav-item">콘텐츠</span>-->
+<!--            <span class="header-nav-item">쇼핑</span>-->
+<!--            <span class="header-nav-item active">커뮤니티</span>-->
+<!--            <span class="header-nav-item">서비스</span>-->
+<!--            <span class="header-nav-item">크리에이터</span>-->
+<!--        </div>-->
+<!--        <div class="header-actions">-->
+<!--            <button class="login-btn">로그인</button>-->
+<!--            <span class="menu-icon">☰</span>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+
+<div class="main-container">
+    <!-- 채팅 영역 -->
+    <div class="chat-container" id ="chat-area" th:attr="data-roomId = ${chatRoom.roomId}">
+        <!-- 채팅방 헤더 -->
+        <div class="chat-header">
+            <!-- <div class="chat-avatar">
+                <img src="https://ssoads.co.kr/common/img/default_profile.png" alt="프로필">
+            </div> -->
+            <div class="chat-info">
+                <div class="chat-title" th:text="${chatRoom.title}">강아지 산책 모임</div>
+                <div class="chat-members" >멤버 <span th:text="${chatRoom.user}"></span>명</div>
+            </div>
+            <div class="chat-menu">
+                <i class="fas fa-ellipsis-v"></i>
+            </div>
+        </div>
+
+        <!-- 채팅 메시지 -->
+        <div class="chat-messages" id="chatMessages">
+<!--            <div class="message">-->
+<!--                <div class="message-avatar">-->
+<!--                    <img src="https://ssoads.co.kr/common/img/default_profile.png" alt="">-->
+<!--                </div>-->
+<!--                <div class="message-content">-->
+<!--                    <div class="message-sender">실버트 (반호)</div>-->
+<!--                    <div class="message-bubble">아니요 먼저 연락하세요</div>-->
+<!--                    <div class="message-time">오후 3:45</div>-->
+<!--                </div>-->
+<!--            </div>-->
+
+<!--            <div class="date-divider">-->
+<!--                <span>2021년 2월 2일</span>-->
+<!--            </div>-->
+
+<!--            <div class="message own">-->
+<!--                <div class="message-content">-->
+<!--                    <div class="message-bubble">밥먹을 때 연락해라 알았지?</div>-->
+<!--                    <div class="message-time">오후 3:45</div>-->
+<!--                </div>-->
+<!--            </div>-->
+
+<!--            <div class="message own">-->
+<!--                <div class="message-content">-->
+<!--                    <div class="message-bubble">저녁 먹고 전화하자</div>-->
+<!--                    <div class="message-time">오후 3:45</div>-->
+<!--                </div>-->
+<!--            </div>-->
+
+<!--            <div class="message">-->
+<!--                <div class="message-avatar">-->
+<!--                    <img src="https://ssoads.co.kr/common/img/default_profile.png" alt="">-->
+<!--                </div>-->
+<!--                <div class="message-content">-->
+<!--                    <div class="message-sender">실버트 (반호)</div>-->
+<!--                    <div class="message-bubble">나한 여자친 한국자가 가너고자 있는데 ~~ 밥먹을 거 나가니 같이 가니까 짧은 것 같아요~~</div>-->
+<!--                    <div class="message-time">오후 3:45</div>-->
+<!--                </div>-->
+<!--            </div>-->
+
+<!--            <div class="message own">-->
+<!--                <div class="message-content">-->
+<!--                    <div class="message-bubble">네. 그래 시간이 가능해요</div>-->
+<!--                    <div class="message-time">오후 3:45</div>-->
+<!--                </div>-->
+<!--            </div>-->
+
+<!--            <div class="message own">-->
+<!--                <div class="message-content">-->
+<!--                    <div class="message-bubble">좋신 대박이네요 ㄷㄷㄷ 어디서 가르쳐요?</div>-->
+<!--                    <div class="message-time">오후 3:45</div>-->
+<!--                </div>-->
+<!--            </div>-->
+        </div>
+
+        <!-- 채팅 입력 -->
+        <div class="chat-input-container">
+            <div class="chat-input-wrapper">
+                <!-- <div class="chat-input-icons">
+                    <i class="far fa-image"></i>
+                    <i class="far fa-file"></i>
+                    <i class="far fa-smile"></i>
+                </div> -->
+                <input type="text" class="chat-input" placeholder="메시지를 입력해주세요." id="messageInput">
+                <button class="chat-send-btn" onclick="sendMessage()">전송</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 사이드바 -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            채팅방 정보
+        </div>
+
+        <!-- 채팅방 정보 -->
+        <div class="sidebar-room-info">
+            <div class="sidebar-room-avatar">
+                <img src="https://ssoads.co.kr/common/img/default_profile.png" alt="">
+            </div>
+            <div class="sidebar-room-title" th:text="${chatRoom.title}">강아지 산책 모임</div>
+            <div class="sidebar-room-desc" th:text="${chatRoom.content}">서울 한강공원에서 함께 산책해요! 🐕</div>
+        </div>
+
+        <div class="sidebar-content">
+            <!-- 통계 -->
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">통계</div>
+                <div class="sidebar-stats">
+                    <div class="stat-item">
+                        <div class="stat-number" th:text="${chatRoom.user}">2</div>
+                        <div class="stat-label" >참여자</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">활발</div>
+                        <div class="stat-label">메시지</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 참여자 목록 -->
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">참여자 (<span th:text="${chatRoom.user}"></span>명)</div>
+                <div class="sidebar-members">
+                    <div class="member-item">
+                        <div class="member-avatar">
+                            <img src="https://ssoads.co.kr/common/img/default_profile.png" alt="">
+                        </div>
+                        <div class="member-info">
+                            <div class="member-name" th:text="${chatRoom.userId}">실버트 (반호)</div>
+                            <div class="member-status">🟢 온라인</div>
+                        </div>
+                    </div>
+                    <div class="member-item">
+                        <div class="member-avatar">
+                            <img src="https://ssoads.co.kr/common/img/default_profile.png" alt="">
+                        </div>
+                        <div class="member-info">
+                            <div class="member-name">나</div>
+                            <div class="member-status">🟢 온라인</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 액션 버튼 -->
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">설정</div>
+                <div class="sidebar-actions">
+                    <button class="sidebar-btn">
+                        <i class="fas fa-bell"></i>
+                        알림 설정
+                    </button>
+                    <button class="sidebar-btn">
+                        <i class="fas fa-image"></i>
+                        사진/파일 보기
+                    </button>
+                    <button class="sidebar-btn">
+                        <i class="fas fa-user-plus"></i>
+                        멤버 초대
+                    </button>
+                    <button class="sidebar-btn" style="color: #ed4956; border-color: #ed4956;">
+                        <i class="fas fa-sign-out-alt"></i>
+                        채팅방 나가기
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    const userId = /*[[${user.id}]]*/ ""
+    const nickname = /*[[${user.nickname}]]*/ ""
+    console.log("userid : "+ userId)
+    console.log("nickname : " + nickname)
+    // 네비게이션 탭 전환
+    document.querySelectorAll('.header-nav-item').forEach(item => {
+        item.addEventListener('click', function() {
+            document.querySelectorAll('.header-nav-item').forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+
+
+    let stompClient = null ;
+    let roomId = null ;
+
+    // console.log(document.getElementById("chat-area").getAttribute("data-roomId"))
+
+    let connect = () => {
+        roomId = document.getElementById("chat-area").getAttribute("data-roomId")
+        const socket = new SockJS('/ws')
+        stompClient = Stomp.over(socket)
+
+        stompClient.connect({}, function (frame){
+            console.log("Connected : " + frame)
+            stompClient.subscribe('/topic/' + roomId, function (msg){
+                const message = JSON.parse(msg.body)
+                if(message.sender == nickname) return ;
+                messageHandler(message)
+
+            })
+            showAddMessage();
+        })
+    }
+
+    const messageHandler = (message) => {
+        if(message.type === 'CHAT'){
+            showMessage(message.sender, message.content)
+        }
+        else if(message.type === 'JOIN'){
+            showAddNotification(message.sender, 1)
+        }
+        else if(message.type === 'LEAVE'){
+            showAddNotification(message.sender, 0)
+        }
+    }
+    const showAddNotification = (username, flag) => {
+        const messagesContainer = document.getElementById('chatMessages');
+        const now = new Date();
+        const timeString = `오후 ${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
+        const message = flag === 1 ? username + "님이 입장하셨습니다." : username + "님이 퇴장하셨습니다."
+
+        const messageHTML = `<div class="date-divider">
+                <span>${message}</span>
+            </div>`;
+
+        messagesContainer.insertAdjacentHTML('beforeend', messageHTML);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    const showAddMessage = () => {
+        const messagesContainer = document.getElementById('chatMessages');
+        const now = new Date();
+        const timeString = `오후 ${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
+        const message = nickname + "님이 입장하셨습니다."
+        userAddMessage()
+
+        const messageHTML = `<div class="date-divider">
+                <span>${message}</span>
+            </div>`;
+
+        messagesContainer.insertAdjacentHTML('beforeend', messageHTML);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    const userAddMessage = () => {
+        stompClient.send('/app/chat.addUser', {}, JSON.stringify({
+            sender: nickname,
+            roomId : roomId
+        }))
+    }
+
+    const showMessage = (sender, content) => {
+        const messagesContainer = document.getElementById('chatMessages');
+        const now = new Date();
+        const timeString = `오후 ${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
+
+        const messageHTML = `<div class="message">
+                <div class="message-avatar">
+                    <img src="https://ssoads.co.kr/common/img/default_profile.png" alt="">
+                </div>
+                <div class="message-content">
+                    <div class="message-sender">${sender}</div>
+                    <div class="message-bubble">${content}</div>
+                    <div class="message-time">${timeString}</div>
+                </div>
+            </div>`;
+
+        messagesContainer.insertAdjacentHTML('beforeend', messageHTML);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    // 메시지 전송 기능
+    function sendMessage() {
+        const input = document.getElementById('messageInput');
+        const message = input.value.trim();
+
+        if (message) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const now = new Date();
+            const timeString = `오후 ${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
+            stompClient.send('/app/chat.sendMessage', {}, JSON.stringify({
+                sender: nickname,
+                content : message,
+                roomId : roomId
+            }))
+
+            const messageHTML = `
+                    <div class="message own">
+                        <div class="message-content">
+                            <div class="message-bubble">${message}</div>
+                            <div class="message-time">${timeString}</div>
+                        </div>
+                    </div>
+                `;
+
+            messagesContainer.insertAdjacentHTML('beforeend', messageHTML);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            input.value = '';
+        }
+    }
+    const laeveRoom = () => {
+        if(stompClient && stompClient.connected){
+            stompClient.send("/app/chat.leave" , {}, JSON.stringify({
+                sender : nickname,
+                roomId : roomId
+            }))
+            stompClient.disconnect()
+        }
+
+    }
+
+    window.onload = connect
+
+    window.addEventListener("beforeunload", () => {
+        laeveRoom()
+    })
+
+
+
+    // Enter 키로 메시지 전송
+    document.getElementById('messageInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
+    });
+
+    // 페이지 로드 시 스크롤을 맨 아래로
+    document.addEventListener('DOMContentLoaded', function() {
+        const messagesContainer = document.getElementById('chatMessages');
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    });
+</script>
+</body>
+</html>
