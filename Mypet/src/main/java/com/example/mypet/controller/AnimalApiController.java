@@ -9,6 +9,10 @@ import com.example.mypet.service.AnimalApiService;
 
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+import com.example.mypet.memberDTO.AnimalDTO;
+
+
 @RestController
 @RequiredArgsConstructor
 public class AnimalApiController {
@@ -17,7 +21,7 @@ public class AnimalApiController {
 
     
     //유기동물 목록 조회 테스트용 엔드포인트
-    //ex.GET /external/animals/list?pageNo=1&numOfRows=12
+    //ex.GET /external/animals/list?pageNo=1&numOfRows=21
     @GetMapping("/external/animals/list")
     public ResponseEntity<String> getAnimals(
             @RequestParam(required = false) Integer pageNo
@@ -28,4 +32,20 @@ public class AnimalApiController {
         //json 문자열 그대로 반환
         return ResponseEntity.ok(response);
     }
+
+
+    //dto 기반 유기동물 목록 조회 (파싱된 결과 반환)
+    //ex) GET /external/animals/list/dto?pageNo=1
+    @GetMapping("/external/animals/list/dto")
+    public ResponseEntity<List<AnimalDTO>> getAnimalsAsDto(
+            @RequestParam(required = false) Integer pageNo
+    ) {
+        //Service에서 JSON → List<AnimalDTO> 변환한 메서드 호출
+        List<AnimalDTO> animals = animalApiService.getAbandonedAnimalsAsDto(pageNo, 21);
+
+        //@RestController + ResponseEntity<List<AnimalDTO>>
+        //=> 자동으로 JSON 배열로 변환되어 응답됨
+        return ResponseEntity.ok(animals);
+    }
+
 }

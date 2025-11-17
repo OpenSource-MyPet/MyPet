@@ -11,6 +11,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+import java.util.ArrayList;
+import java.util.List;
+import com.example.mypet.memberDTO.AnimalDTO;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,6 +27,10 @@ public class AnimalApiService {
 
     //RestTemplateConfig에서 등록한 RestTemplate 주입
     private final RestTemplate restTemplate;
+    
+    //json 파싱용 ObjectMapper (스프링이 자동으로 빈 등록해줌)
+    private final ObjectMapper objectMapper;
+
 
     //application.properties에 저장해둔 api 키 주입
     //animal-api.service-key=발급받은키(api키 스트링값으로 지정)
@@ -58,7 +69,7 @@ public class AnimalApiService {
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
 
         try {
-        	//실제 GET 요청 보내고 응답을 String으로 받기
+        	//실제 GET 요청 보내고 응답을 string으로 받기
         	ResponseEntity<String> response = restTemplate.exchange(
                     uri,
                     HttpMethod.GET,
@@ -72,5 +83,47 @@ public class AnimalApiService {
             return "API 호출 중 오류 발생: " + e.getMessage(); //런타임에러방지
         }
     }
+    
+    
+    //유기동물 목록 조회 + json → List<AnimalDTO> 변환
+    public List<AnimalDTO> getAbandonedAnimalsAsDto(Integer pageNo, Integer numOfRows) {
+
+        //기존 메서드를 재사용해서 json 문자열 가져오기
+        String json = getAbandonedAnimals(pageNo, numOfRows);
+
+        try {
+            //json 파싱
+            JsonNode root = objectMapper.readTree(json);
+
+            //response.body.items.item 까지 내려가기
+            JsonNode itemsNode = root //실제 데이터경로로 이동해서 item노드 찾음
+                    .path("response")
+                    .path("body")
+                    .path("items")
+                    .path("item");
+
+            List<AnimalDTO> list = new ArrayList<>();
+
+            //item이 배열일 때 = api결과가 여러 건일때(보통 이 케이스)
+            if (itemsNode.isArray()) {
+                for (JsonNode itemNode : itemsNode) {
+                    AnimalDTO dto = objectMapper.treeToValue(itemNode, AnimalDTO.class);
+                    list.add(dto);
+                }
+            }
+            //검색 결과가 1건일 때: item이 객체 하나로만 올 수도 있음
+            else if (!itemsNode.isMissingNode() && !itemsNode.isNull()) {
+                AnimalDTO dto = objectMapper.treeToValue(itemsNode, AnimalDTO.class);
+                list.add(dto);
+            }
+
+            return list;
+
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            throw new RuntimeException("유기동물 API JSON 파싱 중 오류 발생: " + e.getMessage(), e);
+        }//파싱 실패하면 빈 리스트나 예외
+    }
+
 
 }

@@ -36,7 +36,7 @@ public class PostingService {
             MultipartFile file = dto.getFile();
             String fileName = file.getOriginalFilename();
             String storedFileName = System.currentTimeMillis() + "_" + fileName;
-            String path = "D:/spring_img/" + storedFileName;
+            String path = "/Users/kimkieun/Documents/mypet_upload/" + storedFileName;
             file.transferTo(new File(path));
             PostingEntity entity = PostingEntity.toPostingFileEntity(dto);
             int saveRid = repo.save(entity).getRid();
