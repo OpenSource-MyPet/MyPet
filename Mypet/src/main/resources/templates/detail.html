@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="https://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyPet</title>
+    <link rel="stylesheet" href="/detail.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <th:block th:replace = "fragment/header :: headerStyle"></th:block>
+</head>
+<body>
+<th:block th:replace = "fragment/header :: header"></th:block>
+
+
+<div class="container">
+    <button class="back-btn" onclick="goBack()">
+        ← 목록으로
+    </button>
+
+    <div class="post-detail-card" th:attr="data-value = ${detail.rid}">
+        <!-- 작성자 정보 -->
+        <div class="post-author">
+            <div class="post-author-avatar">
+                <img src="https://ssoads.co.kr/common/img/default_profile.png" alt="프로필">
+            </div>
+            <div class="post-author-info">
+                <div class="post-author-name" th:text = "${detail.nickname}"></div>
+                <div class="post-author-location">서울 마포구</div>
+            </div>
+            <div class="post-author-time">2시간 전</div>
+        </div>
+
+        <!-- 게시글 이미지 -->
+        <img th:src="@{|/upload/${detail.storedFileName}|}" class="post-image" alt="게시글 이미지">
+
+        <!-- 게시글 내용 -->
+        <div class="post-content">
+            <h1 class="post-title" th:text = "${detail.title}"></h1>
+            <div class="post-description" th:text = "${detail.content}"></div>
+        </div>
+
+        <!-- 액션 버튼 -->
+        <div class="post-actions">
+            <button class="action-btn like-btn" id="like-btn" onclick="toggleLikes(event,this)">
+                <i class="far fa-heart"></i> <span class="like-count" th:text="${detail.likes}">0</span>
+            </button>
+            <button class="action-btn"><i class="far fa-comment" ></i> <span th:text="${detail.comments}">8</span></button>
+            <button class="action-btn bookmark" id="bookmark-btn" onclick="toggleBooks(event, this)"><i class="far fa-bookmark"></i></button>
+        </div>
+
+        <!-- 댓글 -->
+        <div class="comments-section">
+            <div class="comments-title" >댓글 <span th:text="${detail.comments}">10</span>개</div>
+
+            <div class="comment-input-wrapper">
+                <input type="text" class="comment-input" placeholder="댓글을 입력하세요..." id="comment-input">
+                <button class="comment-submit-btn" onclick="addComment()">작성</button>
+            </div>
+
+            <div class="comment-list" id="comment-list" >
+                <div class="comment-item" th:each="comment : ${comments}">
+                    <div class="comment-avatar"><img src="https://ssoads.co.kr/common/img/default_profile.png" alt=""></div>
+                    <div class="comment-content">
+                        <div class="comment-author" th:text="${comment.nickname}">피자매니아</div>
+                        <div class="comment-text" th:text="${comment.comments}">저도 가고 싶어요! 주말에 시간 괜찮을 것 같아요~</div>
+                        <div class="comment-time" th:text="${comment.createdAtFormat}">1시간 전</div>
+                    </div>
+                </div>
+
+<!--                <div class="comment-item">-->
+<!--                    <div class="comment-avatar"><img src="https://ssoads.co.kr/common/img/default_profile.png" alt=""></div>-->
+<!--                    <div class="comment-content">-->
+<!--                        <div class="comment-author">조깅하시다</div>-->
+<!--                        <div class="comment-text">카페 위치 어디인가요?</div>-->
+<!--                        <div class="comment-time">50분 전</div>-->
+<!--                    </div>-->
+<!--                </div>-->
+
+<!--                <div class="comment-item">-->
+<!--                    <div class="comment-avatar">🐱</div>-->
+<!--                    <div class="comment-content">-->
+<!--                        <div class="comment-author">고양이집사</div>-->
+<!--                        <div class="comment-text">사진만 봐도 분위기 좋네요! 저도 참여하고 싶습니다 ㅎㅎ</div>-->
+<!--                        <div class="comment-time">30분 전</div>-->
+<!--                    </div>-->
+<!--                </div>-->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+
+    const toggleBooks = async(event, btn) => {
+        const postcard = btn.closest('.post-detail-card')
+        const post_id = postcard.getAttribute('data-value')
+        // console.log(post_id)
+        event.stopPropagation();
+        let isMarked = 1;
+        const icon = btn.querySelector('i');
+        if(icon.classList.contains('far')){
+            icon.classList.remove('far')
+            icon.classList.add('fas') // 북마크 추가
+        }
+        else{
+            icon.classList.remove('fas')
+            icon.classList.add('far')
+            isMarked = 0
+        }
+        const response = await fetch("/bookmark", {
+            method : "POST",
+            headers : {
+                'Content-Type' : 'application/json'
+            },
+            body : JSON.stringify({"status" : isMarked, "post_id" : post_id})
+        })
+        if(response.ok){
+            const res = await response.json()
+            console.log(res);
+            if(res['status'] == "no"){
+                alert("로그인이 필요한 서비스입니다!")
+                location.href = "/login"
+            }
+        }
+        else{
+            console.log("failed to connecting server")
+        }
+
+    }
+
+    async function toggleLikes (event, btn) {
+        const postcard = btn.closest('.post-detail-card')
+        const post_id = postcard.getAttribute('data-value')
+        console.log(post_id)
+        event.stopPropagation();
+        let isLiked = 1 ;
+
+        const icon = btn.querySelector('i');
+        const countSpan = btn.querySelector('.like-count');
+        let count = parseInt(countSpan.textContent);
+
+        if (btn.classList.contains('liked')) {
+            icon.classList.remove('fas');
+            icon.classList.add('far');
+            btn.classList.remove('liked');
+            isLiked = 0
+            if(count > 0) count--;
+        } else {
+            icon.classList.remove('far');
+            icon.classList.add('fas');
+            btn.classList.add('liked');
+            isLiked = 1
+            count++;
+        }
+        countSpan.textContent = count;
+
+        const response = await fetch("/like", {
+            method : "POST",
+            headers : {
+                'Content-Type' : 'application/json'
+            },
+            body : JSON.stringify({"status" : isLiked, "post_id" : post_id})
+        })
+        if(response.ok){
+            const res = await response.json()
+            console.log(res);
+            if(res['status'] == "no"){
+                alert("로그인이 필요한 서비스입니다!")
+                location.href = "/login"
+            }
+        }
+        else{
+            console.log("failed to connecting server")
+        }
+    }
+
+    // 각 사용자마다의 이전 상호작용 여부
+    const likePostIds = [[${Likes}]]
+    const bookMarkPostIds = [[${BookMarks}]]
+    const likeset = new Set(likePostIds)
+    const bookmarkSet = new Set(bookMarkPostIds)
+    document.addEventListener('DOMContentLoaded', () => {
+        const postCards = document.querySelectorAll(".post-detail-card")
+        console.log("the like set is " + likeset)
+
+        postCards.forEach(element => {
+            const postId = parseInt(element.dataset.value)
+            if(likeset.has(postId)){
+                const btn = element.querySelector("#like-btn")
+                const icon = btn.querySelector('i');
+                const countSpan = btn.querySelector('.like-count');
+                icon.classList.remove('far');
+                icon.classList.add('fas');
+                btn.classList.add('liked');
+            }
+            if(bookmarkSet.has(postId)){
+                const btn = element.querySelector('#bookmark-btn')
+                const icon = btn.querySelector('i')
+                icon.classList.remove('far')
+                icon.classList.add('fas') // 북마크 추가
+            }
+        })
+    })
+
+    async function addComment() {
+        const input = document.getElementById('comment-input');
+        const commentText = input.value.trim();
+
+        const postId = document.querySelector(".post-detail-card").getAttribute("data-value")
+        console.log("comment rid is " + postId)
+        const response = await fetch("/comments", {
+            method : "POST",
+            headers : {
+                'Content-Type' : 'application/json'
+            },
+            body: JSON.stringify({"comments" : commentText, "postId" : parseInt(postId) })
+        })
+        if(response.ok){
+            const res = await response.json()
+            if(res['status'] == "no"){
+                alert("로그인이 필요한 서비스입니다")
+                location.href = "/login"
+                return;
+            }
+        }
+        else{
+            console.log("failed to connecting server")
+            return;
+        }
+
+        if (commentText === '') {
+            alert('댓글 내용을 입력해주세요!');
+            return;
+        }
+
+        const commentList = document.getElementById('comment-list');
+        const newComment = document.createElement('div');
+        newComment.className = 'comment-item';
+        newComment.innerHTML = `
+                <div class="comment-avatar"><img src="https://ssoads.co.kr/common/img/default_profile.png" alt=""></div>
+                <div class="comment-content">
+                    <div class="comment-author">나</div>
+                    <div class="comment-text">${commentText}</div>
+                    <div class="comment-time">방금 전</div>
+                </div>
+            `;
+
+        commentList.insertBefore(newComment, commentList.firstChild);
+        input.value = '';
+
+        // 댓글 수 업데이트
+        const commentCount = document.querySelector('.comments-title');
+        const currentCount = parseInt(commentCount.textContent.match(/\d+/)[0]);
+        commentCount.textContent = `댓글 ${currentCount + 1}개`;
+
+    }
+
+    // Enter 키로 댓글 작성
+    document.getElementById('comment-input').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            addComment();
+        }
+    });
+
+    function goBack() {
+        location.href = "/"
+    }
+
+    // 네비게이션 탭 전환
+    document.querySelectorAll('.header-nav-item').forEach(item => {
+        item.addEventListener('click', function() {
+            document.querySelectorAll('.header-nav-item').forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+</script>
+</body>
+</html>

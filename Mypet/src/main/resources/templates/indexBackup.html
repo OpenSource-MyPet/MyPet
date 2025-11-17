@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="https://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyPet</title>
+    <link rel="stylesheet" href="/index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<div class="header">
+    <div class="header-top">
+        <div class="logo">MyPet</div>
+        <div class="header-nav">
+            <span class="header-nav-item">홈</span>
+            <span class="header-nav-item">콘텐츠</span>
+            <span class="header-nav-item">쇼핑</span>
+            <span class="header-nav-item">커뮤니티</span>
+            <span class="header-nav-item">서비스</span>
+            <span class="header-nav-item">크리에이터</span>
+        </div>
+        <div class="header-actions">
+            <button class="login-btn">로그인</button>
+            <span class="menu-icon">☰</span>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+
+    <div class="search-container">
+        <div class="search-wrapper">
+            <input type="text" class="search-box" id="searchInput" placeholder="게시물, 장소, 사용자 검색...">
+            <i class="fas fa-search search-icon"></i>
+            <button class="clear-btn" id="clearBtn"><i class="fas fa-times-circle"></i></button>
+        </div>
+    </div>
+
+    <!-- 글쓰기 버튼 -->
+    <div class="write-button-container">
+        <a href="/addpost" style="text-decoration-line: none"><button class="write-btn">글쓰기</button></a>
+    </div>
+
+    <div class="masonry-grid">
+
+        <!-- 포스트 카드 -->
+        <div class="post-card" th:each="post : ${postings}" th:attr = "data-value = ${post.rid}, data-title = ${post.title}" >
+            <div class="post-card-header">
+                <div class="post-card-avatar"><img src="https://ssoads.co.kr/common/img/default_profile.png" alt=""></div>
+                <div class="post-card-username" th:text="${post.nickname}"></div>
+            </div>
+            <img th:src="@{|/upload/${post.storedFileName}|}" class="post-card-image" alt="카페 인테리어">
+            <div class="post-card-content">
+                <div class="post-card-location">서울 마포구</div>
+                <div class="post-card-title" th:text="${post.title}"></div>
+                <div class="post-card-description" th:text="${post.content}" ></div>
+            </div>
+
+            <div class="post-card-actions">
+                <button class="action-btn like-btn" onclick="toggleLikes(event, this)">
+                    <i class="far fa-heart"></i> <span class="like-count">0</span>
+                </button>
+                <button class="action-btn"><i class="far fa-comment"></i></button>
+                <button class="action-btn bookmark"><i class="far fa-bookmark"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<button class="fab" onclick="alert('새 포스트 작성 기능 (AI 챗봇으로 활용 고민 중)')">+</button>
+
+<script>
+    const searchInput = document.getElementById('searchInput');
+    const clearBtn = document.getElementById('clearBtn');
+    const postGrid = document.getElementById('postGrid');
+    const noResults = document.getElementById('noResults');
+    function toggleLikes(event, btn) {
+        event.stopPropagation();
+
+        const icon = btn.querySelector('i');
+        const countSpan = btn.querySelector('.like-count');
+        let count = parseInt(countSpan.textContent);
+
+        if (btn.classList.contains('liked')) {
+            icon.classList.remove('fas');
+            icon.classList.add('far');
+            btn.classList.remove('liked');
+            count--;
+        } else {
+            icon.classList.remove('far');
+            icon.classList.add('fas');
+            btn.classList.add('liked');
+            count++;
+        }
+
+        countSpan.textContent = count;
+    }
+    searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase().trim();
+
+        // 클리어 버튼 표시/숨김
+        if (searchTerm) {
+            clearBtn.classList.add('active');
+        } else {
+            clearBtn.classList.remove('active');
+        }
+
+        // 검색 필터링
+        const cards = document.querySelectorAll('.post-card');
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+            const title = card.dataset.title.toLowerCase();
+            // const location = card.dataset.location.toLowerCase();
+            // const user = card.dataset.user.toLowerCase();
+            console.log(title)
+            if (title.includes(searchTerm) ) {
+                card.style.display = '';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        // 결과 없음 메시지
+        if (visibleCount === 0 && searchTerm) {
+            noResults.classList.add('active');
+            postGrid.style.display = 'none';
+        } else {
+            noResults.classList.remove('active');
+            postGrid.style.display = '';
+        }
+    });
+    clearBtn.addEventListener('click', function() {
+        searchInput.value = '';
+        clearBtn.classList.remove('active');
+
+        document.querySelectorAll('.post-card').forEach(card => {
+            card.style.display = '';
+        });
+
+        noResults.classList.remove('active');
+        postGrid.style.display = '';
+        searchInput.focus();
+    });
+
+    function toggleLike(event, btn) {
+        event.stopPropagation();
+
+        if (btn.classList.contains('liked')) {
+            btn.textContent = '🤍';
+            btn.classList.remove('liked');
+        } else {
+            btn.textContent = '❤️';
+            btn.classList.add('liked');
+        }
+    }
+
+    // 카드 클릭 시 상세 페이지로 이동
+    document.querySelectorAll('.post-card').forEach(card => {
+        card.addEventListener('click', function (e) {
+            if (!e.target.closest('.action-btn')) {
+                const title = this.querySelector('.post-card-title').textContent;
+                const value = card.dataset.value;
+                const ridValue = parseInt(value)
+                console.log("value : " + value)
+
+                // alert(`"${title}" 포스트 상세 페이지로 이동`);
+                window.location.href = `/postings/${ridValue}`
+            }
+        });
+    });
+
+    // 네비게이션 탭 전환
+    document.querySelectorAll('.sub-nav-item').forEach(item => {
+        item.addEventListener('click', function() {
+            document.querySelectorAll('.sub-nav-item').forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+    document.querySelectorAll('.header-nav-item').forEach(item => {
+        item.addEventListener('click', function() {
+            document.querySelectorAll('.header-nav-item').forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyPet - 회원가입</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/signup.css">
+</head>
+<body>
+<div class="header">
+    <div class="header-top">
+        <div class="logo" onclick="window.location.href='index.html'">MyPet</div>
+        <div class="header-nav">
+            <span class="header-nav-item">홈</span>
+            <span class="header-nav-item">콘텐츠</span>
+            <span class="header-nav-item">쇼핑</span>
+            <span class="header-nav-item">커뮤니티</span>
+            <span class="header-nav-item">서비스</span>
+            <span class="header-nav-item">크리에이터</span>
+        </div>
+        <div class="header-actions">
+            <button class="login-btn" onclick="window.location.href='login.html'">로그인</button>
+            <span class="menu-icon"><i class="fas fa-bars"></i></span>
+        </div>
+    </div>
+</div>
+
+<div class="signup-container">
+    <div class="signup-box">
+        <div class="signup-header">
+            <h1>회원가입</h1>
+            <p>MyPet과 함께 반려동물 라이프를 시작하세요!</p>
+        </div>
+
+        <form action="/adduser" method="POST" id="signupForm">
+            <!-- 아이디 -->
+            <div class="form-group">
+                <label class="form-label" for="userId">
+                    아이디 <span style="color: #ed4956;">*</span>
+                </label>
+                <div class="input-with-button">
+                    <input
+                            type="text"
+                            class="form-input"
+                            id="userId"
+                            name = "id"
+                            placeholder="영문, 숫자 조합 5-15자"
+                            required
+                    >
+                    <button type="button" class="check-btn" id="checkIdBtn">중복확인</button>
+                </div>
+                <div class="validation-message" id="idMessage"></div>
+            </div>
+
+            <!-- 이름 -->
+            <div class="form-group">
+                <label class="form-label" for="userName">
+                    이름 <span style="color: #ed4956;">*</span>
+                </label>
+                <input
+                        type="text"
+                        class="form-input"
+                        id="userName"
+                        name = "name"
+                        placeholder="이름을 입력하세요"
+                        required
+                >
+            </div>
+
+            <!-- 닉네임 -->
+            <div class="form-group">
+                <label class="form-label" for="nickname">
+                    닉네임 <span style="color: #ed4956;">*</span>
+                </label>
+                <input
+                        type="text"
+                        class="form-input"
+                        id="nickname"
+                        name="nickname"
+                        placeholder="2-10자 이내"
+                        required
+                >
+                <div class="validation-message" id="nicknameMessage"></div>
+            </div>
+
+            <!-- 나이 -->
+            <div class="form-group">
+                <label class="form-label" for="age">
+                    나이 <span style="color: #ed4956;">*</span>
+                </label>
+                <input
+                        type="number"
+                        class="form-input"
+                        id="age"
+                        name="age"
+                        placeholder="나이를 입력하세요"
+                        required
+                >
+                <div class="validation-message" id="ageMessage"></div>
+            </div>
+
+            <!-- 비밀번호 -->
+            <div class="form-group">
+                <label class="form-label" for="password">
+                    비밀번호 <span style="color: #ed4956;">*</span>
+                </label>
+                <input
+                        type="password"
+                        class="form-input"
+                        id="password"
+                        name="password"
+                        placeholder="영문, 숫자, 특수문자 조합 8자 이상"
+                        required
+                >
+                <div class="validation-message" id="passwordMessage"></div>
+            </div>
+
+            <!-- 비밀번호 확인 -->
+            <div class="form-group">
+                <label class="form-label" for="passwordConfirm">
+                    비밀번호 확인 <span style="color: #ed4956;">*</span>
+                </label>
+                <input
+                        type="password"
+                        class="form-input"
+                        id="passwordConfirm"
+                        placeholder="비밀번호를 다시 입력하세요"
+                        required
+                >
+                <div class="validation-message" id="passwordConfirmMessage"></div>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">
+                회원가입
+            </button>
+        </form>
+
+        <div class="login-link">
+            이미 계정이 있으신가요? <a href="login.html">로그인</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    let isIdChecked = false;
+    let isIdAvailable = false;
+
+    // 아이디 중복확인
+    document.getElementById('checkIdBtn').addEventListener('click', async() => {
+        const userId = document.getElementById('userId').value;
+        const message = document.getElementById('idMessage');
+
+        if (!userId) {
+            message.textContent = '아이디를 입력해주세요.';
+            message.className = 'validation-message error';
+            return;
+        }
+
+        // 아이디 유효성 검사 (5-15자, 영문+숫자)
+        // const idPattern = /^[a-zA-Z0-9]{5,15}$/;
+        // if (!idPattern.test(userId)) {
+        //     message.textContent = '영문, 숫자 조합 5-15자로 입력해주세요.';
+        //     message.className = 'validation-message error';
+        //     return;
+        // }
+
+        const response = await fetch("/checkId", {
+            method : "POST",
+            headers : {
+                'Content-Type' : 'application/json'
+            },
+            body : JSON.stringify({id : userId})
+        })
+        if(response.ok){
+            const res = await response.json()
+            if(res['status'] == "ok"){
+                console.log("status is ok")
+                message.textContent = '사용 가능한 아이디입니다.';
+                message.className = 'validation-message success';
+                isIdChecked = true;
+                isIdAvailable = true;
+
+            }
+            else{
+                console.log("status is " + res['status'])
+                message.textContent = '이미 사용중인 아이디입니다.';
+                message.className = 'validation-message error';
+                isIdChecked = false;
+                isIdAvailable = false;
+            }
+        }
+        else{
+            console.log("server connecting is failed")
+        }
+
+        // 중복확인 시뮬레이션 (실제로는 서버 통신 필요)
+        // setTimeout(() => {
+        //     const isDuplicate = Math.random() > 0.5; // 랜덤으로 중복 여부 결정
+        //
+        //     if (isDuplicate) {
+        //         message.textContent = '이미 사용중인 아이디입니다.';
+        //         message.className = 'validation-message error';
+        //         isIdChecked = false;
+        //         isIdAvailable = false;
+        //     } else {
+        //         message.textContent = '사용 가능한 아이디입니다.';
+        //         message.className = 'validation-message success';
+        //         isIdChecked = true;
+        //         isIdAvailable = true;
+        //     }
+        // }, 500);
+    });
+
+    // 아이디 입력 시 중복확인 초기화
+    document.getElementById('userId').addEventListener('input', function() {
+        isIdChecked = false;
+        isIdAvailable = false;
+        document.getElementById('idMessage').className = 'validation-message';
+    });
+
+    // 비밀번호 유효성 검사
+    document.getElementById('password').addEventListener('blur', function() {
+        const password = this.value;
+        const message = document.getElementById('passwordMessage');
+        // const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+
+        if (!password) {
+            message.className = 'validation-message';
+
+        }
+
+        // if (!passwordPattern.test(password)) {
+        //     message.textContent = '영문, 숫자, 특수문자 조합 8자 이상이어야 합니다.';
+        //     message.className = 'validation-message error';
+        // }
+        else {
+            message.textContent = '사용 가능한 비밀번호입니다.';
+            message.className = 'validation-message success';
+        }
+    });
+
+    // 비밀번호 확인
+    document.getElementById('passwordConfirm').addEventListener('input', function() {
+        const password = document.getElementById('password').value;
+        const passwordConfirm = this.value;
+        const message = document.getElementById('passwordConfirmMessage');
+
+        if (!passwordConfirm) {
+            message.className = 'validation-message';
+            return;
+        }
+
+        if (password !== passwordConfirm) {
+            message.textContent = '비밀번호가 일치하지 않습니다.';
+            message.className = 'validation-message error';
+        } else {
+            message.textContent = '비밀번호가 일치합니다.';
+            message.className = 'validation-message success';
+        }
+    });
+
+    // 닉네임 유효성 검사
+    document.getElementById('nickname').addEventListener('blur', function() {
+        const nickname = this.value;
+        const message = document.getElementById('nicknameMessage');
+
+        if (!nickname) {
+            message.className = 'validation-message';
+
+        }
+
+        // if (nickname.length < 2 || nickname.length > 10) {
+        //     message.textContent = '닉네임은 2-10자 이내로 입력해주세요.';
+        //     message.className = 'validation-message error';
+        // }
+        else {
+            message.textContent = '사용 가능한 닉네임입니다.';
+            message.className = 'validation-message success';
+        }
+    });
+
+    // 나이 유효성 검사
+    document.getElementById('age').addEventListener('input', function() {
+        const age = parseInt(this.value);
+        const message = document.getElementById('ageMessage');
+
+        if (!age) {
+            message.className = 'validation-message';
+            return;
+        }
+
+        if (age < 0) {
+            message.textContent = '올바른 나이를 입력해주세요.';
+            message.className = 'validation-message error';
+        } else if (age > 120) {
+            message.textContent = '올바른 나이를 입력해주세요.';
+            message.className = 'validation-message error';
+        } else {
+            message.className = 'validation-message';
+        }
+    });
+
+    // 폼 제출
+    document.getElementById('signupForm').addEventListener('submit', function(e) {
+
+
+        // 아이디 중복확인 체크
+        if (!isIdChecked || !isIdAvailable) {
+            alert('아이디 중복확인을 해주세요.');
+            e.preventDefault();
+            return;
+        }
+
+        // 모든 필드 검증
+        const userId = document.getElementById('userId').value;
+        const password = document.getElementById('password').value;
+        const passwordConfirm = document.getElementById('passwordConfirm').value;
+        const userName = document.getElementById('userName').value;
+        const nickname = document.getElementById('nickname').value;
+        const age = document.getElementById('age').value;
+
+        if (!userId || !password || !passwordConfirm || !userName || !nickname || !age) {
+            alert('모든 필수 항목을 입력해주세요.');
+            e.preventDefault();
+            return;
+        }
+
+        if (password !== passwordConfirm) {
+            alert('비밀번호가 일치하지 않습니다.');
+            e.preventDefault();
+            return;
+        }
+
+        // 회원가입 처리 (실제로는 서버로 데이터 전송)
+        alert('회원가입이 완료되었습니다!');
+        console.log({
+            userId,
+            userName,
+            nickname,
+            age
+        });
+
+        // 로그인 페이지로 이동
+        // window.location.href = 'login.html';
+    });
+
+    // 네비게이션 탭 전환
+    document.querySelectorAll('.header-nav-item').forEach(item => {
+        item.addEventListener('click', function() {
+            document.querySelectorAll('.header-nav-item').forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+</script>
+</body>
+</html>
