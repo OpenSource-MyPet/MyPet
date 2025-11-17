@@ -23,7 +23,7 @@ public class AnimalApiController {
             @RequestParam(required = false) Integer pageNo
     ) {
         //서비스 호출 (pageNo 없으면 서비스에서 기본값 1로 처리<안 보내면 null이고 이경우 기본값)
-    	String response = animalApiService.getAbandonedAnimals(pageNo, 12); //numofrows는 일단 12로 고정함
+    	String response = animalApiService.getAbandonedAnimals(pageNo, 21); //numofrows는 일단 21로 고정함
 
         //json 문자열 그대로 반환
         return ResponseEntity.ok(response);

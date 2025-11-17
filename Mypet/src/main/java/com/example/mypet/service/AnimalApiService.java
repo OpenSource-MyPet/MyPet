@@ -1,8 +1,6 @@
 package com.example.mypet.service;
 
 import java.net.URI;
-//import java.net.URLEncoder;
-//import java.nio.charset.StandardCharsets;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -49,7 +47,7 @@ public class AnimalApiService {
                 .queryParam("stdt", "20250101") 		//조회시작년도YYYYMMDD형식 일단 임의로 고정값 
                 .queryParam("_type", "json")                         //json으로 응답
                 .queryParam("pageNo", pageNo != null ? pageNo : 1)   //기본값 1페이지
-                .queryParam("numOfRows", numOfRows != null ? numOfRows : 12) //기본값 12개
+                .queryParam("numOfRows", numOfRows != null ? numOfRows : 21) //기본값 21개
                 .build(false)
                 .toUri();
         
