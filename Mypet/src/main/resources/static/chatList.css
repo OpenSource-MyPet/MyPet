@@ -1,0 +1,445 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f5f5f5;
+    padding-top: 120px;
+}
+
+/* 헤더 */
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-bottom: 1px solid #e5e5e5;
+    padding: 0;
+    z-index: 100;
+}
+
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.logo {
+    font-size: 28px;
+    font-weight: bold;
+    color: #000;
+    font-family: 'Brush Script MT', cursive;
+}
+
+.header-nav {
+    display: flex;
+    gap: 32px;
+    align-items: center;
+}
+
+.header-nav-item {
+    font-size: 15px;
+    font-weight: 500;
+    margin: 0 20px;
+    padding: 8px 8px;
+    color: #333;
+    text-decoration: none;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.header-nav-item:hover {
+    color: #000;
+}
+
+.header-actions {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.header-nav-item.active {
+    color: #000;
+    border-bottom-color: #ffd500;
+}
+
+.login-btn {
+    background: #ffd500;
+    color: #000;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.login-btn:hover {
+    background: #ffdd33;
+}
+
+.menu-icon {
+    cursor: pointer;
+    font-size: 24px;
+    color: #333;
+}
+
+/* 메인 컨테이너 */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* 상단 타이틀 & 검색 영역 */
+.page-header {
+    background: white;
+    padding: 24px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.page-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 16px;
+    color: #000;
+}
+
+.search-bar {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.search-input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 2px solid #e5e5e5;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: border-color 0.2s;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #ffd500;
+}
+
+.search-btn {
+    padding: 12px 24px;
+    background: #ffd500;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.search-btn:hover {
+    background: #ffdd33;
+}
+
+/* 카테고리 필터 */
+.category-filter {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+    overflow-x: auto;
+    padding: 4px 0;
+}
+
+.category-filter::-webkit-scrollbar {
+    height: 6px;
+}
+
+.category-filter::-webkit-scrollbar-thumb {
+    background: #ddd;
+    border-radius: 3px;
+}
+
+.category-chip {
+    padding: 10px 20px;
+    background: white;
+    border: 2px solid #e5e5e5;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.category-chip:hover {
+    border-color: #ffd500;
+    background: #fffef0;
+}
+
+.category-chip.active {
+    background: #ffd500;
+    border-color: #ffd500;
+    color: #000;
+}
+
+/* 채팅방 리스트 */
+.chatroom-list {
+    display: grid;
+    gap: 16px;
+}
+
+.chatroom-item {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    gap: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.chatroom-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+}
+
+.chatroom-thumbnail {
+    width: 80px;
+    height: 80px;
+    border-radius: 16px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.chatroom-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.chatroom-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #000;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.chatroom-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    background: #ffd500;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #000;
+}
+
+.chatroom-description {
+    font-size: 14px;
+    color: #666;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.chatroom-meta {
+    display: flex;
+    gap: 16px;
+    font-size: 13px;
+    color: #999;
+    align-items: center;
+}
+
+.chatroom-meta i {
+    margin-right: 4px;
+}
+
+.chatroom-members {
+    display: flex;
+    align-items: center;
+}
+
+.chatroom-members.popular {
+    color: #ff6b6b;
+    font-weight: 600;
+}
+
+.chatroom-tags {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+}
+
+.tag {
+    padding: 4px 12px;
+    background: #f5f5f5;
+    border-radius: 12px;
+    font-size: 12px;
+    color: #666;
+}
+
+/* 플로팅 버튼 */
+.fab {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #ffd500;
+    color: #000;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    transition: transform 0.2s;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fab:hover {
+    transform: scale(1.1);
+    background: #ffdd33;
+}
+
+/* 빈 상태 */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #999;
+}
+
+.empty-state i {
+    font-size: 48px;
+    margin-bottom: 16px;
+    color: #ddd;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+    .container {
+        padding: 12px;
+    }
+
+    .chatroom-item {
+        padding: 16px;
+    }
+
+    .chatroom-thumbnail {
+        width: 60px;
+        height: 60px;
+    }
+
+    .chatroom-title {
+        font-size: 16px;
+    }
+
+    .header-top {
+        padding: 12px 20px;
+    }
+
+    .header-nav {
+        display: none;
+    }
+}
+.chatroom-active {
+    font-size: 12px;
+    color: #4caf50;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+}
+
+.active-dot {
+    width: 6px;
+    height: 6px;
+    background: #4caf50;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+.page-title {
+    font-size: 28px;
+    font-weight: bold;
+    color: #000;
+    margin-bottom: 10px;
+}
+
+.page-subtitle {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 30px;
+}
+.section-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #000;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.write-button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+    padding: 0 10px;
+}
+
+.write-btn {
+    background: #ffd500;
+    color: #000;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(255, 213, 0, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.add-chatroom-btn {
+    padding: 10px 16px;
+    background: #ffd500;
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap; /* 버튼 내용이 줄바꿈되지 않도록 */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    flex-shrink: 0; /* 버튼 크기가 줄어들지 않도록 */
+    margin-left: auto;
+}
+
+.add-chatroom-btn i {
+    margin-right: 6px;
+}
+
+.add-chatroom-btn:hover {
+    background: #ffdd33;
+}

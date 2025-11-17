@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyPet</title>
+    <link rel="stylesheet" href="/writePost.css">
+</head>
+<body>
+<div class="header">
+    <div class="header-top">
+        <div class="logo">MyPet</div>
+        <div class="header-nav">
+            <span class="header-nav-item">홈</span>
+            <span class="header-nav-item">콘텐츠</span>
+            <span class="header-nav-item">쇼핑</span>
+            <span class="header-nav-item active">커뮤니티</span>
+            <span class="header-nav-item">서비스</span>
+            <span class="header-nav-item">크리에이터</span>
+        </div>
+        <div class="header-actions">
+            <button class="login-btn">로그인</button>
+            <span class="menu-icon">☰</span>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <form action="/addchat" method="POST" class="write-form" id="postForm" enctype="multipart/form-data">
+        <div class="form-header">
+            <h1>📄 포스트 작성하기</h1>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="title">제목</label>
+            <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    class="form-input"
+                    placeholder="제목을 입력하세요"
+                    required
+            >
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="content">본문</label>
+            <textarea
+                    id="content"
+                    class="form-textarea"
+                    name="content"
+                    placeholder="여러분의 이야기를 자유롭게 공유해주세요!"
+                    required
+            ></textarea>
+        </div>
+
+        <div class="form-actions">
+            <button type="button" class="btn btn-cancel" onclick="history.back()">취소</button>
+            <button type="submit" class="btn btn-submit">게시하기</button>
+        </div>
+    </form>
+</div>
+
+<script>
+
+    const postForm = document.getElementById('postForm');
+    let selectedFiles = [];
+
+
+
+    // 폼 제출 이벤트
+    postForm.addEventListener('submit', (e) => {
+
+
+        const title = document.getElementById('title').value.trim();
+        const content = document.getElementById('content').value.trim();
+
+        if (!title || !content) {
+            alert('제목과 내용을 모두 입력해주세요.');
+            e.preventDefault();
+        }
+
+        // 실제로는 서버로 데이터 전송
+        console.log({
+            title: title,
+            content: content,
+            images: selectedFiles
+        });
+
+        alert('게시글이 작성되었습니다!');
+        // history.back(); // 이전 페이지로 이동
+    });
+
+    // 네비게이션 항목 클릭 이벤트
+    document.querySelectorAll('.header-nav-item').forEach(item => {
+        item.addEventListener('click', function() {
+            document.querySelectorAll('.header-nav-item').forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+</script>
+</body>
+</html>
