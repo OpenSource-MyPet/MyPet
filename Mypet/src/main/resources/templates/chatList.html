@@ -6,25 +6,27 @@
     <title>오픈채팅 - MyPet</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/chatList.css">
+    <th:block th:replace = "fragment/header :: headerStyle"></th:block>
 </head>
 <body>
-<div class="header">
-    <div class="header-top">
-        <div class="logo">MyPet</div>
-        <div class="header-nav">
-            <span class="header-nav-item">홈</span>
-            <span class="header-nav-item">콘텐츠</span>
-            <span class="header-nav-item">쇼핑</span>
-            <span class="header-nav-item active">커뮤니티</span>
-            <span class="header-nav-item">서비스</span>
-            <span class="header-nav-item">크리에이터</span>
-        </div>
-        <div class="header-actions">
-            <button class="login-btn">로그인</button>
-            <span class="menu-icon">☰</span>
-        </div>
-    </div>
-</div>
+<th:block th:replace = "fragment/header :: header"></th:block>
+<!--<div class="header">-->
+<!--    <div class="header-top">-->
+<!--        <div class="logo">MyPet</div>-->
+<!--        <div class="header-nav">-->
+<!--            <span class="header-nav-item">홈</span>-->
+<!--            <span class="header-nav-item">콘텐츠</span>-->
+<!--            <span class="header-nav-item">쇼핑</span>-->
+<!--            <span class="header-nav-item active">커뮤니티</span>-->
+<!--            <span class="header-nav-item">서비스</span>-->
+<!--            <span class="header-nav-item">크리에이터</span>-->
+<!--        </div>-->
+<!--        <div class="header-actions">-->
+<!--            <button class="login-btn">로그인</button>-->
+<!--            <span class="menu-icon">☰</span>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
 
 <div class="container">
     <!-- 페이지 헤더 -->
@@ -348,7 +350,7 @@
     //         // 여기에 검색 로직 추가 가능
     //     }
     // });
-
+    document.getElementById("header-openchat").classList.add("active")
     // 엔터키로 검색
     document.querySelector('.search-input').addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {

@@ -185,11 +185,11 @@
         <div class="logo" onclick="location.href ='/' ">MyPet</div>
         <div class="header-nav">
             <span class="header-nav-item">홈</span>
-            <span class="header-nav-item">콘텐츠</span>
-            <span class="header-nav-item">Feature A</span>
-            <span class="header-nav-item">Feature B</span>
-            <span class="header-nav-item">Feature C</span>
-            <span class="header-nav-item">Feature D</span>
+            <span class="header-nav-item" id="header-posting" onclick="location.href='/'">반려동물 포스팅</span>
+            <span class="header-nav-item" onclick="location.href='/'">내 주변 동물병원</span>
+            <span class="header-nav-item" id = "header-openchat" onclick="location.href='/openchat'">나의 산책친구</span>
+            <span class="header-nav-item" onclick="location.href='/'">AI 분석</span>
+            <span class="header-nav-item" onclick="location.href='/'">새 가족 찾기</span>
         </div>
         <div class="header-actions">
             <button th:if="${session.id == null}" class="login-btn" onclick="location.href = '/login'">로그인</button>
