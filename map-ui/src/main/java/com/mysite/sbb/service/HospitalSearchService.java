@@ -38,7 +38,7 @@ public class HospitalSearchService {
         int radius = (radiusMeters == null || radiusMeters <= 0) ? defaultRadius : radiusMeters;
         if (radius > 20000) radius = 20000;
 
-        // ✅ 1) 키워드 검색: '동물병원' (한글 → UTF-8 인코딩 필요)
+        //  1) 키워드 검색: '동물병원' (한글 → UTF-8 인코딩 필요)
         URI uri = UriComponentsBuilder
                 .fromHttpUrl("https://dapi.kakao.com/v2/local/search/keyword.json")
                 .queryParam("query", "동물병원")

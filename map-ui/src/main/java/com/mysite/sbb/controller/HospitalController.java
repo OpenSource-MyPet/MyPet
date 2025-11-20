@@ -14,7 +14,7 @@ public class HospitalController {
         this.service = service;
     }
 
-    // ✅ 여기가 핵심 수정 부분!
+   
     @GetMapping("/hospitals")
     public HospitalListResponse hospitals(
             @RequestParam(name = "lat") double lat,
