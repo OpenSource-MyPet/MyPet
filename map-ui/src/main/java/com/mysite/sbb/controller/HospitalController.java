@@ -17,7 +17,8 @@ public class HospitalController {
    
     @GetMapping("/hospitals")
     public HospitalListResponse hospitals(
-            @RequestParam(name = "lat") double lat,
+            //이 값들이 그대로 service로 전달
+    		@RequestParam(name = "lat") double lat,
             @RequestParam(name = "lng") double lng,
             @RequestParam(name = "radius", required = false) Integer radius
     ) {
@@ -25,6 +26,8 @@ public class HospitalController {
     }
 
     @GetMapping("/hospitals/mock")
+    //카카오 API가 안 되거나 로컬에서 테스트할 때를 위해 만든 샘플 데이터용 엔드포인트임 
+   // 실제 API와 응답 구조를 동일하게 맞춰서, 프론트 코드는 실제/목 데이터를 신경 쓰지 않고 동일하게 동작
     public HospitalListResponse mock() {
         return new HospitalListResponse(java.util.List.of(
                 new com.mysite.sbb.dto.HospitalDto("충북대 동물병원", "청주시 서원구 충대로 1", "043-000-0000", 36.6329, 127.4590),

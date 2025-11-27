@@ -1,3 +1,4 @@
+// map 요청 들어오면 templates/map.html을 반환하는 가장 기본적인 뷰 컨트롤러 
 package com.mysite.sbb.controller;
 
 import org.springframework.stereotype.Controller;
@@ -10,3 +11,4 @@ public class MapController {
         return "map"; // templates/map.html
     }
 }
+
