@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>동물 상세 정보 - MyPet</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/animalDetail.css">
+    <th:block th:replace = "fragment/header :: headerStyle"></th:block>
+</head>
+<body>
+<!--<div class="header">-->
+<!--    <div class="header-top">-->
+<!--        <div class="logo">MyPet</div>-->
+<!--        <div class="header-nav">-->
+<!--            <span class="header-nav-item">홈</span>-->
+<!--            <span class="header-nav-item">콘텐츠</span>-->
+<!--            <span class="header-nav-item">쇼핑</span>-->
+<!--            <span class="header-nav-item active">커뮤니티</span>-->
+<!--            <span class="header-nav-item">서비스</span>-->
+<!--            <span class="header-nav-item">크리에이터</span>-->
+<!--        </div>-->
+<!--        <div class="header-actions">-->
+<!--            <button class="login-btn">로그인</button>-->
+<!--            <span class="menu-icon">☰</span>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+<th:block th:replace = "fragment/header :: header"></th:block>
+
+<div class="container">
+    <div class="detail-wrapper">
+        <!-- 이미지 섹션 -->
+        <div class="image-section">
+            <div class="animal-image-container">
+                <img th:src="${animal.popfile1}"
+                     class="animal-image"
+                     alt="믹스견">
+                <div class="status-badge" th:text="${animal.processState}">보호중</div>
+                <div class="image-counter">1 / 1</div>
+            </div>
+        </div>
+
+        <!-- 정보 섹션 -->
+        <div class="info-section">
+            <div class="animal-category" th:text="${animal.upKindNm}">개</div>
+            <h1 class="animal-title" th:text="${animal.kindFullNm}">믹스견</h1>
+            <p class="animal-subtitle"><span th:text="${animal.getSexDisplay}">암컷</span > / <span th:text="${animal.getNeuterDisplay}">(중성화 X)</span> / <span th:text="${animal.kindNm}">기타(믹스)</span> / <span th:text="${animal.getAgeDisplay}">2024(년생)</span> / <span th:text="${animal.weight}">10(kg)</span></p>
+
+            <div class="info-grid">
+                <div class="info-row">
+                    <div class="info-label">공고번호</div>
+                    <div class="info-value highlight" th:text="${animal.noticeNo}">전북-남원-2025-00499</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">공고기간</div>
+                    <div class="info-value" th:text="${animal.getNoticePeriodDisplay}">20251122 ~ 20251202</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">발견장소</div>
+                    <div class="info-value" th:text="${animal.happenPlace}">운봉읍파출소</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">특이사항</div>
+                    <div class="info-value" th:text="${animal.specialMark}">내외부기생충, 기아</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">관할기관</div>
+                    <div class="info-value" th:text="${animal.getRegionDisplay}">전북특별자치도 남원시</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">보호센터</div>
+                    <div class="info-value" th:text="${animal.careNm}">전북특별자치도 남원시</div>
+                </div>
+            </div>
+
+            <div class="notice">
+                <div class="notice-text">
+                    * 진화 문의는 보호소 운영시간 확인 후 이용 바랍니다.
+                </div>
+            </div>
+
+            <div class="shelter-info">
+                <div class="shelter-name">보호센터: <span th:text="${animal.careNm}">인월동물병원</span></div>
+                <div class="shelter-contact">
+                    <i class="fas fa-phone"></i>
+                    <span th:text="${animal.careTel}">Tel : 063-636-2873</span>
+                </div>
+                <div class="shelter-contact">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span th:text="${animal.careAddr}">Tel : 063-636-2873</span>
+                </div>
+            </div>
+
+            <button class="action-button" onclick="history.back()">
+                목록으로 돌아가기
+            </button>
+        </div>
+    </div>
+</div>
+</div>
+
+<script>
+    // 네비게이션 활성화
+    document.querySelectorAll('.header-nav-item').forEach(item => {
+        item.addEventListener('click', function() {
+            document.querySelectorAll('.header-nav-item').forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+    document.getElementById("header-animals").classList.add('active')
+    // 액션 버튼
+    // document.querySelector('.action-button').addEventListener('click', function() {
+    //     alert('포인핸드 앱으로 연결됩니다!');
+    // });
+</script>
+</body>
+</html>
