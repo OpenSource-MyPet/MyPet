@@ -1,0 +1,348 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #fafafa;
+    padding-top: 120px;
+}
+
+/* 헤더 */
+/*.header {*/
+/*    position: fixed;*/
+/*    top: 0;*/
+/*    left: 0;*/
+/*    right: 0;*/
+/*    background: white;*/
+/*    border-bottom: 1px solid #e5e5e5;*/
+/*    padding: 0;*/
+/*    z-index: 100;*/
+/*}*/
+
+/*.header-top {*/
+/*    display: flex;*/
+/*    justify-content: space-between;*/
+/*    align-items: center;*/
+/*    padding: 12px 40px;*/
+/*    max-width: 1400px;*/
+/*    margin: 0 auto;*/
+/*}*/
+
+/*.logo {*/
+/*    font-size: 28px;*/
+/*    font-weight: bold;*/
+/*    color: #000;*/
+/*    font-family: 'Brush Script MT', cursive;*/
+/*}*/
+
+/*.header-nav {*/
+/*    display: flex;*/
+/*    gap: 32px;*/
+/*    align-items: center;*/
+/*}*/
+
+/*.header-nav-item {*/
+/*    font-size: 15px;*/
+/*    font-weight: 500;*/
+/*    margin: 0 20px;*/
+/*    padding: 8px 8px;*/
+/*    color: #333;*/
+/*    text-decoration: none;*/
+/*    cursor: pointer;*/
+/*    border-bottom: 3px solid transparent;*/
+/*    transition: all 0.3s ease;*/
+/*    position: relative;*/
+/*}*/
+
+/*.header-nav-item:hover {*/
+/*    color: #000;*/
+/*}*/
+
+/*.header-actions {*/
+/*    display: flex;*/
+/*    gap: 16px;*/
+/*    align-items: center;*/
+/*}*/
+
+/*.header-nav-item.active {*/
+/*    color: #000;*/
+/*    border-bottom-color: #ffd500;*/
+/*}*/
+
+/*.login-btn {*/
+/*    background: #ffd500;*/
+/*    color: #000;*/
+/*    border: none;*/
+/*    padding: 8px 20px;*/
+/*    border-radius: 20px;*/
+/*    font-weight: 600;*/
+/*    font-size: 14px;*/
+/*    cursor: pointer;*/
+/*    transition: background 0.2s;*/
+/*}*/
+
+/*.login-btn:hover {*/
+/*    background: #ffdd33;*/
+/*}*/
+
+/*.menu-icon {*/
+/*    cursor: pointer;*/
+/*    font-size: 24px;*/
+/*    color: #333;*/
+/*}*/
+
+/* 메인 컨테이너 */
+.container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+h1 {
+    color: #333;
+    margin-bottom: 30px;
+    font-size: 28px;
+}
+
+/* 필터 영역 */
+.filter-container {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.filter-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    padding: 8px 20px;
+    border: 2px solid #e5e5e5;
+    background: white;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+    border-color: #ffd500;
+    color: #000;
+}
+
+.filter-btn.active {
+    background: #ffd500;
+    border-color: #ffd500;
+    color: #000;
+    font-weight: 600;
+}
+
+/* 동물 그리드 */
+.animal-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.animal-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+}
+
+.animal-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+}
+
+.animal-card.hidden {
+    display: none;
+}
+
+.animal-image {
+    width: 100%;
+    height: 320px;
+    object-fit: cover;
+    background: linear-gradient(135deg, #e0e0e0 0%, #f5f5f5 100%);
+}
+
+.animal-info {
+    padding: 16px;
+}
+
+.animal-info-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.animal-info h3 {
+    color: #333;
+    font-size: 18px;
+    margin: 0;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    font-size: 14px;
+}
+
+.info-label {
+    color: #666;
+    font-weight: 500;
+}
+
+.info-value {
+    color: #333;
+    font-weight: 600;
+}
+
+.status {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.status.protected {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+
+.status.adopted {
+    background-color: #f3e5f5;
+    color: #7b1fa2;
+}
+
+.status.available {
+    background-color: #e8f5e9;
+    color: #388e3c;
+}
+
+@media (max-width: 900px) {
+    .animal-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .animal-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .header-nav {
+        display: none;
+    }
+}
+.page-title {
+    font-size: 32px;
+    font-weight: bold;
+    color: #262626;
+    margin-bottom: 10px;
+}
+
+.page-subtitle {
+    font-size: 16px;
+    color: #8e8e8e;
+    margin-bottom: 40px;
+}
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 40px 0 60px;
+}
+
+.pagination-btn {
+    min-width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e5e5e5;
+    background: white;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    border-color: #ffd500;
+    color: #000;
+    background: #fffbf0;
+}
+
+.pagination-btn.active {
+    background: #ffd500;
+    border-color: #ffd500;
+    color: #000;
+    font-weight: 600;
+}
+
+.pagination-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.pagination-ellipsis {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+}
+
+@media (max-width: 900px) {
+    .animal-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .animal-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .header-nav {
+        display: none;
+    }
+
+    .pagination {
+        gap: 4px;
+    }
+
+    .pagination-btn {
+        min-width: 36px;
+        height: 36px;
+        font-size: 13px;
+    }
+}
