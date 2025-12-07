@@ -84,6 +84,87 @@ public class AnimalApiService {
             return "API 호출 중 오류 발생: " + e.getMessage(); //런타임에러방지
         }
     }
+    public String getSingleAbandonedAnimals(String id) {
+
+        //공공데이터포털 v2 엔드포인트 (목록 조회)
+        String baseUrl =
+                "https://apis.data.go.kr/1543061/abandonmentPublicService_v2/abandonmentPublic_v2";
+
+        //serviceKey를 URL에 넣기 전에 UTF-8로 인코딩
+        //String encodedKey = URLEncoder.encode(serviceKey, StandardCharsets.UTF_8);
+        String key = serviceKey; //인코딩 없이 properties그대로(오류때문에)
+
+        //쿼리 파라미터 조합
+        URI uri = UriComponentsBuilder.fromUriString(baseUrl)
+                //.queryParam("serviceKey", encodedKey)
+                .queryParam("serviceKey", key)
+                .queryParam("stdt", "20250101") 		//조회시작년도YYYYMMDD형식 일단 임의로 고정값
+                .queryParam("_type", "json")                         //json으로 응답
+                .queryParam("desertion_no", id)
+                .build(false)
+                .toUri();
+
+        System.out.println("CALL URI = " + uri); //오류때문에확인용
+
+        //공공데이터 api는 특별한 헤더가 필요 없어서 빈 헤더 사용
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<String> entity = new HttpEntity<>(null, headers);
+
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            //실제 GET 요청 보내고 응답을 string으로 받기
+            ResponseEntity<String> response = restTemplate.exchange(
+                    uri,
+                    HttpMethod.GET,
+                    entity,
+                    String.class
+            );
+            return response.getBody();
+
+        } catch (RestClientException e) {
+            e.printStackTrace();
+            return "API 호출 중 오류 발생: " + e.getMessage(); //런타임에러방지
+        }
+    }
+    public List<AnimalDTO> getSingleAbandonedAnimalsAsDto(String id) {
+
+        //기존 메서드를 재사용해서 json 문자열 가져오기
+        String json = getSingleAbandonedAnimals(id);
+
+        try {
+            //json 파싱
+            JsonNode root = objectMapper.readTree(json);
+
+            //response.body.items.item 까지 내려가기
+            JsonNode itemsNode = root //실제 데이터경로로 이동해서 item노드 찾음
+                    .path("response")
+                    .path("body")
+                    .path("items")
+                    .path("item");
+
+            List<AnimalDTO> list = new ArrayList<>();
+
+            //item이 배열일 때 = api결과가 여러 건일때(보통 이 케이스)
+            if (itemsNode.isArray()) {
+                for (JsonNode itemNode : itemsNode) {
+                    AnimalDTO dto = objectMapper.treeToValue(itemNode, AnimalDTO.class);
+                    list.add(dto);
+                }
+            }
+            //검색 결과가 1건일 때: item이 객체 하나로만 올 수도 있음
+            else if (!itemsNode.isMissingNode() && !itemsNode.isNull()) {
+                AnimalDTO dto = objectMapper.treeToValue(itemsNode, AnimalDTO.class);
+                list.add(dto);
+            }
+
+            return list;
+
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            throw new RuntimeException("유기동물 API JSON 파싱 중 오류 발생: " + e.getMessage(), e);
+        }//파싱 실패하면 빈 리스트나 예외
+    }
+
 
 
     //유기동물 목록 조회 + json → List<AnimalDTO> 변환

@@ -4,6 +4,9 @@ import com.example.mypet.entity.PostingEntity;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -21,6 +24,8 @@ public class PostingDTO {
     private String originalFileName;
     private String storedFileName;
     private int fileAttached;
+    private LocalDateTime createdAt;
+    private String createdAtFormat;
 
 
     public static PostingDTO toPostingDTO(PostingEntity element) {
@@ -32,6 +37,8 @@ public class PostingDTO {
         dto.setTitle(element.getTitle());
         dto.setLikes(element.getLikes());
         dto.setComments(element.getComments());
+        dto.setCreatedAt(element.getCreatedAt());
+        dto.setCreatedAtFormat(element.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일")));
         if(element.getFileAttached() == 0){
             dto.setFileAttached(element.getFileAttached());
         }

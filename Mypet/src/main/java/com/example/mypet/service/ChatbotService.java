@@ -20,7 +20,7 @@ public class ChatbotService {
                 .build()
                 .toUri();
         HttpHeaders headers = new HttpHeaders();
-        String key = "AIzaSyDFMoUp5UWJgIturOVdOFfiPBg8hPqDuxI";
+        String key = "AIzaSyBdPuAaiiKfkApQog_uAZLi_TE26Y7zrEk";
         String previous_key = "AIzaSyDTwiL9aooGEpwyNI0qLO1z2WrowXaBSkg";
         headers.set("x-goog-api-key", key);
         headers.setContentType(MediaType.APPLICATION_JSON);

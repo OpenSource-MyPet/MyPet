@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,8 +29,14 @@ public class PostingEntity {
     private int fileAttached;
     private int likes;
     private int comments;
+    private LocalDateTime createdAt;
     @OneToMany(mappedBy = "postingEntity", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<PostingFileEntity> postingFileEntityList = new ArrayList<>();
+
+    @PrePersist
+    public void createDate(){
+        this.createdAt = LocalDateTime.now();
+    }
 
     public static PostingEntity toPostingEntity(PostingDTO dto) {
         PostingEntity entity = new PostingEntity();

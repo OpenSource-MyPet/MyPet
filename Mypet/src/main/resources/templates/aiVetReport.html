@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="https://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyPet AI Chat</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/AiVetReport.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <th:block th:replace = "fragment/header :: headerStyle"></th:block>
+</head>
+<body>
+<th:block th:replace = "fragment/header :: header"></th:block>
+<!--<div class="header">-->
+<!--    <div class="header-top">-->
+<!--        <div class="logo">MyPet</div>-->
+<!--        <div class="header-nav">-->
+<!--            <span class="header-nav-item">홈</span>-->
+<!--            <span class="header-nav-item">콘텐츠</span>-->
+<!--            <span class="header-nav-item">쇼핑</span>-->
+<!--            <span class="header-nav-item">커뮤니티</span>-->
+<!--            <span class="header-nav-item">서비스</span>-->
+<!--            <span class="header-nav-item active">크리에이터</span>-->
+<!--        </div>-->
+<!--        <div class="header-actions">-->
+<!--            <button class="login-btn">로그인</button>-->
+<!--            <span class="menu-icon"><i class="fas fa-bars"></i></span>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+
+<div class="chat-container">
+    <div class="chat-header">
+        <div class="ai-avatar">
+            <!-- <img src="https://cdn-icons-png.flaticon.com/512/7645/7645092.png" alt=""> -->
+            <!-- <i class="fas fa-robot"></i> -->
+            <i class="fas fa-stethoscope"></i>
+
+        </div>
+        <div class="chat-info">
+            <h2>MyPet AI 증상 진단 서비스</h2>
+            <p>반려동물의 이상증상을 빠르게 진단해보세요</p>
+        </div>
+    </div>
+
+    <div class="chat-messages" id="chatMessages">
+        <div class="message ai">
+            <div class="message-avatar">
+                <!-- <i class="fas fa-robot"></i> -->
+                <i class="fas fa-user-md"></i>
+
+            </div>
+            <div class="message-content">
+                <div class="message-bubble">안녕하세요! MyPet AI 수의사입니다. 작성한 진단 문진서를 바탕으로 진단을 시작합니다.</div>
+                <div class="message-time">방금 전</div>
+            </div>
+        </div>
+
+        <div class="typing-indicator" id="typingIndicator">
+            <div class="message-avatar">
+                <i class="fas fa-user-md"></i>
+            </div>
+            <div class="typing-dots">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="chat-input-container">
+        <div class="image-preview-container" id="imagePreviewContainer"></div>
+
+        <div class="chat-input-wrapper">
+                <textarea
+                        id="chatInput"
+                        class="chat-input"
+                        placeholder="메시지를 입력하세요..."
+                        rows="1"
+                ></textarea>
+            <div class="input-actions">
+                <!-- <label class="image-upload-btn" for="imageUpload">
+                    <i class="fas fa-image"></i>
+                    <input type="file" id="imageUpload" accept="image/*" multiple>
+                </label> -->
+                <button class="send-btn" id="sendBtn">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    const chatMessages = document.getElementById('chatMessages');
+    const chatInput = document.getElementById('chatInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const typingIndicator = document.getElementById('typingIndicator');
+    const imageUpload = document.getElementById('imageUpload');
+    const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+
+    let selectedImages = [];
+
+    const getlink = async() => {
+        const response = await fetch("/summarize", {
+            method : 'POST',
+            headers : {
+                'Content-Type' : 'application/json'
+            },
+            body: JSON.stringify({"summarize" : summarize})
+        })
+        if(response.ok){
+            const res = await response.json()
+            const status = res['status'];
+            console.log("status is " + status)
+            const url = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=5a6aee031958aee23852152d89381f27&redirect_uri=http://localhost:8080/kakao/callback&prompt=login"
+            location.href = `${url}`
+        }
+        else{
+            console.log("Failed to connecting to server")
+        }
+    }
+
+    let summarize = null
+
+    const image = /*[[${form.base64}]]*/''
+    const symptom = /*[[${form.symptom}]]*/''
+    const type = /*[[${form.type}]]*/''
+    const imageContentType = /*[[${form.contentType}]]*/''
+    console.log(imageContentType)
+    console.log(image)
+    console.log(symptom)
+    console.log(type)
+    typingIndicator.classList.add('active');
+    document.addEventListener('DOMContentLoaded', async() => {
+        const response = await fetch("/report", {
+            method : 'POST',
+            headers : {
+                'Content-Type' : 'application/json'
+            },
+            body : JSON.stringify({"image": image, "symptom" : symptom, "type" : type, "contentType" : imageContentType})
+        })
+
+        // showTypingIndicator()
+
+        if(response.ok){
+            // hideTypingIndicator()
+            typingIndicator.classList.remove('active');
+            const res = await response.json()
+            console.log("res is "+ res['prompt'])
+            console.log("summarize is " + res['summarize'])
+            summarize = res['summarize']
+            console.log("summary is " + summarize)
+            // let text = marked.parse(res['prompt'])
+            addMessage(res['prompt'], 'ai', true)
+        }
+        else{
+            // hideTypingIndicator()
+            typingIndicator.classList.remove('active');
+            console.log("Failed to connecting the server")
+        }
+    })
+
+    function showTypingIndicator() {
+        const chatBody = document.getElementById('chatMessages')
+        const typingDiv = document.createElement('div');
+        typingDiv.className = 'typing-indicator';
+        typingDiv.id = 'typingIndicator';
+        typingDiv.innerHTML = `
+                <div class="message-avatar">
+                <i class="fas fa-robot"></i>
+            </div>
+            <div class="typing-dots active">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            </div>
+            `;
+        chatBody.appendChild(typingDiv);
+        chatBody.scrollTop = chatBody.scrollHeight;
+    }
+    function hideTypingIndicator() {
+        const typingIndicator = document.getElementById('typingIndicator');
+        if (typingIndicator) {
+            typingIndicator.remove();
+        }
+    }
+
+    document.getElementById("header-ai").classList.add("active")
+
+    // 자동 높이 조절
+    chatInput.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+    });
+
+    // 엔터키로 전송
+    chatInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+
+    sendBtn.addEventListener('click', sendMessage);
+
+    // 이미지 업로드 처리
+    // imageUpload.addEventListener('change', function(e) {
+    //     const files = Array.from(e.target.files);
+    //
+    //     files.forEach(file => {
+    //         if (file.type.startsWith('image/')) {
+    //             const reader = new FileReader();
+    //
+    //             reader.onload = function(event) {
+    //                 const imageData = {
+    //                     src: event.target.result,
+    //                     file: file
+    //                 };
+    //                 selectedImages.push(imageData);
+    //                 displayImagePreview(imageData, selectedImages.length - 1);
+    //             };
+    //
+    //             reader.readAsDataURL(file);
+    //         }
+    //     });
+    //
+    //     // input 초기화
+    //     imageUpload.value = '';
+    // });
+
+    // function displayImagePreview(imageData, index) {
+    //     const wrapper = document.createElement('div');
+    //     wrapper.className = 'image-preview-wrapper';
+    //     wrapper.dataset.index = index;
+    //
+    //     wrapper.innerHTML = `
+    //             <img src="${imageData.src}" class="image-preview" alt="Preview">
+    //             <button class="remove-image-btn" onclick="removeImage(${index})">
+    //                 <i class="fas fa-times"></i>
+    //             </button>
+    //         `;
+    //
+    //     imagePreviewContainer.appendChild(wrapper);
+    // }
+    //
+    // window.removeImage = function(index) {
+    //     selectedImages = selectedImages.filter((_, i) => i !== index);
+    //     imagePreviewContainer.innerHTML = '';
+    //     selectedImages.forEach((img, i) => displayImagePreview(img, i));
+    // };
+
+    function sendMessage() {
+        const message = chatInput.value.trim();
+        const hasImages = selectedImages.length > 0;
+
+        if (!message && !hasImages) return;
+
+        // 사용자 메시지 추가
+        addMessage(message, 'user', selectedImages);
+        chatInput.value = '';
+        chatInput.style.height = 'auto';
+        selectedImages = [];
+        imagePreviewContainer.innerHTML = '';
+
+        // AI 응답 시뮬레이션
+        // api 사용량 떄문에 아직 api와 연결 안함
+        // 더미데이터 바탕으로 일단 시뮬레이션만 구성하고 api 연결할 예정
+        typingIndicator.classList.add('active');
+        scrollToBottom();
+
+        setTimeout(() => {
+            typingIndicator.classList.remove('active');
+            const responses = [
+                '네, 반려동물에 관한 좋은 질문이네요! 더 자세히 알려드리겠습니다.',
+                '안건염은 반려동물이 겪을 수 있는 흔한 안질환 중 하나입니다. 평소에 관리를 잘 해주시고 연고를 자주 발라주세요',
+                '해당 질환은 안검염으로써, 알레르기성으로 쉽게 발현되며 증상으로는 눈 주위의 발진 및 부어오름 등이 있습니다',
+                '그 부분에 대해서는 전문가와 상담하시는 것을 추천드립니다.',
+                '반려동물의 건강과 행복을 위해 꼭 필요한 정보입니다!',
+                '도움이 되셨길 바랍니다. 다른 궁금한 점이 있으시면 말씀해주세요!'
+            ];
+            const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+            addMessage(randomResponse, 'ai');
+        }, 1500);
+    }
+
+    function addMessage(text, sender, share = false, images = []) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${sender}`;
+
+        const now = new Date();
+        const timeString = `${now.getHours() > 12 ? '오후' : '오전'} ${now.getHours() % 12 || 12}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+        let imagesHtml = '';
+        if (images.length > 0) {
+            imagesHtml = '<div class="message-images">';
+            images.forEach(img => {
+                imagesHtml += `<img src="${img.src}" class="message-image" alt="Uploaded image">`;
+            });
+            imagesHtml += '</div>';
+        }
+        if(share === true){
+            messageDiv.innerHTML = `
+                <div class="message-avatar">
+                    <i class="fas fa-${sender === 'ai' ? 'user-md' : 'user'}"></i>
+                </div>
+                <div class="message-content">
+                    ${text ? `<div class="message-bubble">${text}</div>` : ''}
+                    ${imagesHtml}
+                    <div class="message-time">${timeString}
+                        <button class="export-btn" id="exportBtn" onclick="getlink()">
+                            <i class="fas fa-comment"></i>
+                            카카오톡으로 내보내기
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+        else{
+            messageDiv.innerHTML = `
+                <div class="message-avatar">
+                    <i class="fas fa-${sender === 'ai' ? 'user-md' : 'user'}"></i>
+                </div>
+                <div class="message-content">
+                    ${text ? `<div class="message-bubble">${text}</div>` : ''}
+                    ${imagesHtml}
+                    <div class="message-time">${timeString}</div>
+                </div>
+            `;
+        }
+
+
+        chatMessages.insertBefore(messageDiv, typingIndicator);
+        scrollToBottom();
+    }
+
+    function scrollToBottom() {
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // 네비게이션 활성화
+    document.querySelectorAll('.header-nav-item').forEach(item => {
+        item.addEventListener('click', function() {
+            document.querySelectorAll('.header-nav-item').forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+</script>
+</body>
+</html>

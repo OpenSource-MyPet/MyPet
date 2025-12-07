@@ -179,19 +179,19 @@
             <div class="sidebar-section">
                 <div class="sidebar-section-title">설정</div>
                 <div class="sidebar-actions">
-                    <button class="sidebar-btn">
-                        <i class="fas fa-bell"></i>
-                        알림 설정
+                    <button class="sidebar-btn" onclick="darkmode()">
+                        <i class="fas fa-moon"></i>
+                        다크모드 설정
                     </button>
-                    <button class="sidebar-btn">
-                        <i class="fas fa-image"></i>
-                        사진/파일 보기
+                    <button class="sidebar-btn" onclick="lightmode()">
+                        <i class="fas fa-exchange-alt"></i>
+                        기본 설정으로 변경
                     </button>
                     <button class="sidebar-btn">
                         <i class="fas fa-user-plus"></i>
-                        멤버 초대
+                        초대 링크 복사
                     </button>
-                    <button class="sidebar-btn" style="color: #ed4956; border-color: #ed4956;">
+                    <button class="sidebar-btn" onclick="quitRoom()" style="color: #ed4956; border-color: #ed4956;">
                         <i class="fas fa-sign-out-alt"></i>
                         채팅방 나가기
                     </button>
@@ -202,6 +202,14 @@
 </div>
 
 <script th:inline="javascript">
+
+    const darkmode = () => {
+        document.body.classList.toggle('dark')
+    }
+    const lightmode = () => {
+        document.body.classList.remove('dark')
+    }
+
     const userId = /*[[${user.id}]]*/ ""
     const nickname = /*[[${user.nickname}]]*/ ""
     console.log("userid : "+ userId)
@@ -213,6 +221,7 @@
             this.classList.add('active');
         });
     });
+    document.getElementById("header-openchat").classList.add("active")
 
 
     let stompClient = null ;
@@ -251,7 +260,7 @@
     const showAddNotification = (username, flag) => {
         const messagesContainer = document.getElementById('chatMessages');
         const now = new Date();
-        const timeString = `오후 ${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
+        const timeString = `${now.getHours() > 12 ? '오후' : '오전'} ${now.getHours() % 12 || 12}:${String(now.getMinutes()).padStart(2, '0')}`;
         const message = flag === 1 ? username + "님이 입장하셨습니다." : username + "님이 퇴장하셨습니다."
 
         const messageHTML = `<div class="date-divider">
@@ -333,7 +342,7 @@
             input.value = '';
         }
     }
-    const laeveRoom = () => {
+    const leaveRoom = () => {
         if(stompClient && stompClient.connected){
             stompClient.send("/app/chat.leave" , {}, JSON.stringify({
                 sender : nickname,
@@ -347,9 +356,13 @@
     window.onload = connect
 
     window.addEventListener("beforeunload", () => {
-        laeveRoom()
+        leaveRoom()
     })
 
+    const quitRoom = () => {
+        leaveRoom()
+        location.href = '/openchat'
+    }
 
 
     // Enter 키로 메시지 전송

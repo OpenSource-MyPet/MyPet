@@ -2,6 +2,8 @@ package com.example.mypet.memberDTO;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 //동물한마리에 대한 정보
 @Data

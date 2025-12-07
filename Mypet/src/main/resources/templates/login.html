@@ -6,24 +6,27 @@
     <title>MyPet - 로그인</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/login.css">
+    <th:block th:replace = "fragment/header :: headerStyle"></th:block>
 </head>
 <body>
-<div class="header">
-    <div class="header-top">
-        <div class="logo" onclick="alert('홈으로 이동합니다!')">MyPet</div>
-        <div class="header-nav">
-            <span class="header-nav-item">홈</span>
-            <span class="header-nav-item">콘텐츠</span>
-            <span class="header-nav-item">쇼핑</span>
-            <span class="header-nav-item">커뮤니티</span>
-            <span class="header-nav-item">서비스</span>
-            <span class="header-nav-item">크리에이터</span>
-        </div>
-        <div class="header-actions">
-            <span class="menu-icon"><i class="fas fa-bars"></i></span>
-        </div>
-    </div>
-</div>
+<th:block th:replace = "fragment/header :: header"></th:block>
+<!--<div class="header">-->
+<!--    <div class="header-top">-->
+<!--        <div class="logo" onclick="alert('홈으로 이동합니다!')">MyPet</div>-->
+<!--        <div class="header-nav">-->
+<!--            <span class="header-nav-item">홈</span>-->
+<!--            <span class="header-nav-item">콘텐츠</span>-->
+<!--            <span class="header-nav-item">쇼핑</span>-->
+<!--            <span class="header-nav-item">커뮤니티</span>-->
+<!--            <span class="header-nav-item">서비스</span>-->
+<!--            <span class="header-nav-item">크리에이터</span>-->
+<!--        </div>-->
+<!--        <div class="header-actions">-->
+<!--            <span class="menu-icon"><i class="fas fa-bars"></i></span>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+
 
 <div class="login-container">
     <div class="login-box">

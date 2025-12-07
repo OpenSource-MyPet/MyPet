@@ -5,25 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MyPet</title>
     <link rel="stylesheet" href="/writePost.css">
+    <th:block th:replace = "fragment/header :: headerStyle"></th:block>
 </head>
 <body>
-<div class="header">
-    <div class="header-top">
-        <div class="logo">MyPet</div>
-        <div class="header-nav">
-            <span class="header-nav-item">홈</span>
-            <span class="header-nav-item">콘텐츠</span>
-            <span class="header-nav-item">쇼핑</span>
-            <span class="header-nav-item active">커뮤니티</span>
-            <span class="header-nav-item">서비스</span>
-            <span class="header-nav-item">크리에이터</span>
-        </div>
-        <div class="header-actions">
-            <button class="login-btn">로그인</button>
-            <span class="menu-icon">☰</span>
-        </div>
-    </div>
-</div>
+<th:block th:replace = "fragment/header :: header"></th:block>
+
 
 <div class="container">
     <form action="/addpost" method="POST" class="write-form" id="postForm" enctype="multipart/form-data">
@@ -167,6 +153,17 @@
         if (!title || !content) {
             alert('제목과 내용을 모두 입력해주세요.');
             e.preventDefault();
+            return
+        }
+        if(selectedFiles.length === 0){
+            alert("최소 1장 이상 업로드해주세요")
+            e.preventDefault()
+            return
+        }
+        if(selectedFiles[0].size > 10*1024*1024){
+            alert("사진은 10MB를 초과할 수 없습니다")
+            e.preventDefault()
+            return
         }
 
         // 실제로는 서버로 데이터 전송
