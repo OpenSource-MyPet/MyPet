@@ -17,7 +17,7 @@ import java.util.Map;
 
 @Service
 public class KakaoService {
-    public String getToken(String code) {
+    public String getToken(String code, String summary) {
         URI uri = UriComponentsBuilder
                 .fromUriString("https://kauth.kakao.com/oauth/token")
                 .queryParam("grant_type", "authorization_code")
@@ -38,7 +38,7 @@ public class KakaoService {
         try{
             Map<String, String> resMap = mapper.readValue(json, Map.class);
             access_token = resMap.get("access_token");
-            sendMessage(access_token);
+            sendMessage(access_token, summary);
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -48,23 +48,23 @@ public class KakaoService {
         return access_token;
     }
 
-    private void sendMessage(String accessToken) {
+    private void sendMessage(String accessToken, String summary) {
         String url = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
         headers.setBearerAuth(accessToken);
-        String templateData = """
+        String templateData = String.format("""
     {
         "object_type": "text",
-        "text": "텍스트 영역입니다. 최대 200자 표시 가능합니다.",
+        "text": "%s",
         "link": {
             "web_url": "https://developers.kakao.com",
             "mobile_web_url": "https://developers.kakao.com"
         },
         "button_title": "바로 확인"
     }
-    """;
+    """, summary);
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("template_object", templateData);
 

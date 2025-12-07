@@ -5,18 +5,25 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Controller
 public class KakaoController {
 
     KakaoService service;
+    private final Map<String, String> tempStorage = new ConcurrentHashMap<>();
 
     @Autowired
     public KakaoController(KakaoService service){
         this.service = service;
     }
+
+
+
 
     @GetMapping(value = "/kakao")
     public String kakao(Model model){
@@ -30,10 +37,22 @@ public class KakaoController {
     @GetMapping(value = "/kakao/callback")
     public String callback(@RequestParam() String code, HttpSession session){
         System.out.println("code : " + code);
-        String token = service.getToken(code);
+        String summary = null;
+//        Object keyobj = session.getAttribute("uidKey");
+
+        if(session.getAttribute("summary") == null){
+            summary = "현재 세션에 에러가 있습니다 다시 시도해주십시오";
+        }
+        else{
+            summary = session.getAttribute("summary").toString();
+            session.removeAttribute("summary");
+        }
+        System.out.println("summary : " + summary);
+
+        String token = service.getToken(code, summary);
         System.out.println("token : " +token);
         session.setAttribute("access_token", token);
-        return "index";
+        return "messageStatus";
     }
 
     @GetMapping(value = "/kakao/logout")

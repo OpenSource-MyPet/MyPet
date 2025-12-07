@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>메시지 전송 완료 - MyPet</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/messageStatus.css">
+</head>
+<body>
+<div class="header">
+    <div class="header-top">
+        <div class="logo">MyPet</div>
+        <div class="header-nav">
+            <span class="header-nav-item">홈</span>
+            <span class="header-nav-item">콘텐츠</span>
+            <span class="header-nav-item">쇼핑</span>
+            <span class="header-nav-item">커뮤니티</span>
+            <span class="header-nav-item">서비스</span>
+            <span class="header-nav-item">크리에이터</span>
+        </div>
+        <div class="header-actions">
+            <button class="login-btn">로그인</button>
+            <span class="menu-icon">☰</span>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="success-box">
+        <div class="success-icon">
+            <i class="fas fa-check"></i>
+        </div>
+
+        <h1 class="success-title">메시지 전송 완료!</h1>
+        <p class="success-message">
+            카카오톡으로 진단서가 성공적으로 전송되었습니다.<br>
+            나와의 채팅을 확인해 보세요!
+        </p>
+
+        <div class="kakao-info">
+            <div class="kakao-info-item">
+                <i class="fas fa-comment"></i>
+                <span>카카오톡으로 예상 진단서 전송완료</span>
+            </div>
+            <div class="kakao-info-item">
+                <i class="fas fa-clock"></i>
+                <span>전송 시간: 방금 전</span>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button class="btn btn-primary" onclick="location.href='/'">
+                <i class="fas fa-home"></i> 홈으로
+            </button>
+            <button class="btn btn-secondary" onclick="history.go(-2)">
+                <i class="fas fa-arrow-left"></i> 이전으로
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 네비게이션 탭 전환
+    document.querySelectorAll('.header-nav-item').forEach(item => {
+        item.addEventListener('click', function() {
+            document.querySelectorAll('.header-nav-item').forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+
+    // 3초 후 자동으로 홈으로 이동 (선택사항)
+    // setTimeout(() => {
+    //     location.href = '/';
+    // }, 3000);
+</script>
+</body>
+</html>

@@ -96,6 +96,7 @@ public class PostingController {
 
     @GetMapping(value = "/logout")
     public String logout(HttpSession session){
+
         session.invalidate();
         return "redirect:/";
     }
